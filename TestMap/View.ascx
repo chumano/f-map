@@ -5,7 +5,7 @@
         <script type="text/javascript" src="OpenLayers.js"></script>
         <script type="text/javascript" src="MyJScript.js"></script>
     -->
-
+    <script type="text/javascript">
         <script defer="defer" type="text/javascript">
             var map;
             var untiled;
@@ -47,7 +47,7 @@
                 tiled = new OpenLayers.Layer.WMS(
                     "sde:SDE.DBO.QUAN1_RG_HCXA - Tiled", "http://localhost:8080/geoserver/wms",
                     {
-                        LAYERS: 'sde:SDE.DBO.QUAN1_RG_HCXA',
+                        LAYERS: 'sde:QUAN1_RG_HCXA',
                         STYLES: 'Quan1_Style',
                         format: format,
                         tiled: !pureCoverage,
@@ -64,7 +64,7 @@
                 untiled = new OpenLayers.Layer.WMS(
                     "sde:SDE.DBO.QUAN1_RG_HCXA - Untiled", "http://localhost:8080/geoserver/wms",
                     {
-                        LAYERS: 'sde:SDE.DBO.QUAN1_RG_HCXA',
+                        LAYERS: 'sde:QUAN1_RG_HCXA',
                         STYLES: 'Quan1_Style',
                         format: format
                     },
@@ -301,6 +301,7 @@
                 tiled.mergeNewParams(params);
                 untiled.mergeNewParams(params);
             }
+
         </script>
 </head>
 <body onload="init()">
