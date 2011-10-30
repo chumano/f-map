@@ -305,8 +305,8 @@
         </script>
 </head>
 <body onload="init()">
-<!--
 <div>
+<!--
     <h2>
         Calling Web Methods</h2>
     <table>
