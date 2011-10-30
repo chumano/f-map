@@ -6,7 +6,6 @@
         <script type="text/javascript" src="MyJScript.js"></script>
     -->
     <script type="text/javascript">
-        <script defer="defer" type="text/javascript">
             var map;
             var untiled;
             var tiled;
@@ -100,7 +99,7 @@
                         INFO_FORMAT: 'text/html',
                         QUERY_LAYERS: map.layers[0].params.LAYERS,
                         FEATURE_COUNT: 50,
-                        Layers: 'sde:SDE.DBO.QUAN1_RG_HCXA',
+                        Layers: 'sde:QUAN1_RG_HCXA',
                         WIDTH: map.size.w,
                         HEIGHT: map.size.h,
                         format: format,
@@ -305,8 +304,9 @@
         </script>
 </head>
 <body onload="init()">
-<div>
+
 <!--
+<div>
     <h2>
         Calling Web Methods</h2>
     <table>
@@ -357,6 +357,7 @@
     <span id="ResultId"></span>
 </div>
 -->
+
 <asp:TextBox ID="TextBox1" runat="server" Width="328px"></asp:TextBox>
 <asp:Button ID="Button6" runat="server" Text="Button" />
 <p>
