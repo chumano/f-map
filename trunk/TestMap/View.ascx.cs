@@ -57,6 +57,10 @@ namespace DotNetNuke.Modules
                 objScriptReference = new ScriptReference();
                 objScriptReference.Path = @"~/DesktopModules/TestMap/MyJScript.js";
                 objScriptManager.Scripts.Add(objScriptReference);
+
+                objScriptReference = new ScriptReference();
+                objScriptReference.Path = @"~/DesktopModules/TestMap/Map.js";
+                objScriptManager.Scripts.Add(objScriptReference);
             }
 
         }
