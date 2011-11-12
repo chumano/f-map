@@ -61,7 +61,7 @@ Ext.onReady(function () {
                         var actions = '[{"name":"action","value":"GetWards"},{"name":"district_id","value":' + combo.getValue() + '}]';
                         getInfo(actions,
                             function (reponsewards) {
-                                    comboWard.store = new Ext.data.ArrayStore({
+                                comboWard.store = new Ext.data.ArrayStore({
                                     fields: ['id', 'ward'],
                                     data: str2Arr(reponsewards)
                                 });
@@ -90,6 +90,27 @@ Ext.onReady(function () {
                 listeners: { select: {
                     fn: function (combo, value) {
                         // alert("aaa");
+                        //action=GetInfo&bbox=105.922404,10.756404,105.968596,10.802596&x=234&y=430
+                        //&layer_name=sde:QUAN1_RG_HCXA&width=550&height=550
+
+                        //[{"name":"Mã hành chính","value":"7.6026755E7"},{"name":"Tên","value":"Phường Cô Giang"},{"name":"Số hộ","value":"4185"}]
+                        var bbox = '105.922404,10.756404,105.968596,10.802596';
+                        var x = 234, y = 430;
+                        var layer = 'sde:QUAN1_RG_HCXA';
+                        var w = 55, h = 550;
+                        var actions = '[{"name":"action","value":"GetInfo"}'
+                                    + ',{"name":"bbox","value":' + bbox + '}'
+                                    + ',{"name":"x","value":' + x + '}'
+                                    + ',{"name":"y","value":' + y + '}'
+                                    + ',{"name":"layer_name","value":' + layer + '}'
+                                    + ',{"name":"width","value":' + w + '}'
+                                    + ',{"name":"height","value":' + h + '}'
+                                    + ']';
+                        getInfo(actions,
+                            function (reponsewards) {
+                                alert(reponsewards);
+                            }
+                        );
                     }
                 }
                 }
