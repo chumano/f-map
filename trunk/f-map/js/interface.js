@@ -140,8 +140,8 @@ Ext.onReady(function () {
     infoWin = new Ext.Window({
         applyTo: 'wininfo',
         layout: 'fit',
-        width: 'auto',
-        height: 'auto',
+        width: 200,
+        height: 100,
         closeAction: 'hide',
         plain: true,
         border: false,

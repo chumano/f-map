@@ -80,18 +80,15 @@ function init() {
                 var myObject = "jSon=" + reponsewards;
                 eval(myObject);
 
-                label = new Ext.form.Label({
-                    text: 'chumano'
-                });
-                
                 var str = '';
                 for (var i = 0; i < jSon.length; i++) {
-                    str += jSon[i].name + ' : ' + jSon[i].value;
+                    if (i != 0) str += '<br/>';
+                    str += jSon[i].name + ' : ' 
+                    + '<b>' + jSon[i].value + '</b>';
 
                 }
-                label.text = str;
-                infoWin.items.add(label);
-                //                infoWin.items = {label};
+
+                infoWin.body.update(str);
                 infoWin.doLayout();
                 infoWin.show();
             }
