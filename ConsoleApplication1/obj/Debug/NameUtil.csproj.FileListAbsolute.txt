@@ -1,0 +1,2 @@
+F:\LuanVanMoi\Code sửa địa chỉ nhà\NameUtil\ConsoleApplication1\obj\Debug\ConsoleApplication1.exe
+F:\LuanVanMoi\Code sửa địa chỉ nhà\NameUtil\ConsoleApplication1\obj\Debug\ConsoleApplication1.pdb
