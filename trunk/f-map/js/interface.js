@@ -94,10 +94,10 @@ Ext.onReady(function () {
                         //&layer_name=sde:QUAN1_RG_HCXA&width=550&height=550
 
                         //[{"name":"Mã hành chính","value":"7.6026755E7"},{"name":"Tên","value":"Phường Cô Giang"},{"name":"Số hộ","value":"4185"}]
-                        var bbox = '105.922404,10.756404,105.968596,10.802596';
-                        var x = 234, y = 430;
-                        var layer = 'sde:QUAN1_RG_HCXA';
-                        var w = 55, h = 550;
+                        var bbox = '"105.922404,10.756404,105.968596,10.802596"';
+                        var x = "234", y = "430";
+                        var layer = '"sde:QUAN1_RG_HCXA"';
+                        var w = 550, h = 550;
                         var actions = '[{"name":"action","value":"GetInfo"}'
                                     + ',{"name":"bbox","value":' + bbox + '}'
                                     + ',{"name":"x","value":' + x + '}'

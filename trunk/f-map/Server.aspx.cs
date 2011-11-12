@@ -75,6 +75,8 @@ public partial class Server : System.Web.UI.Page
 
     private void GetInfo(string url)
     {
+        // TODO: try catch error 
+
         string response = DoGetRequest(url);
         string[] array = response.Split(new char[] { '\r', '\n' });
 
