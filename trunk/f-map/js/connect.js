@@ -15,9 +15,6 @@ function getMap(actions) {
     req.open('GET', url, true);
     req.send(null);
 }
-function func1(a) {
-    alert(a);
-}
 
 function getInfo(actions, func) {
     var url = serverURL + para2Str(actions);
