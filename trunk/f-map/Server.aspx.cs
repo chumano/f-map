@@ -167,7 +167,7 @@ public partial class Server : System.Web.UI.Page
     {
         keyword = NameUtil.GetInstance().Convert(keyword);
         string[] keys = keyword.Split(',');
-        string query = String.Format("select distinct SoNha, TenConDuong from QUAN1 where SoNha like '%{0}%' and TenConDuong2 like '%{1}%'", keys[0], keys[1]);
+        string query = String.Format("select distinct SoNha, TenConDuong, X, Y from QUAN1 where SoNha like '%{0}%' and TenConDuong2 like '%{1}%'", keys[0], keys[1]);
         DataTable dt = Helper.GetDataTable2(query);
         int len = dt.Rows.Count;
         AddressModel[] addresses = new AddressModel[len];
@@ -179,6 +179,8 @@ public partial class Server : System.Web.UI.Page
             addresses[i] = new AddressModel();
             addresses[i].SoNha = (string)row["SoNha"];
             addresses[i].TenDuong = (string)row["TenConDuong"];
+            addresses[i].X = (decimal)row["X"];
+            addresses[i].Y = (decimal)row["Y"];
         }
 
         string response = JsonConvert.SerializeObject(addresses);
