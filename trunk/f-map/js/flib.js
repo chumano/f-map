@@ -22,13 +22,40 @@ function str2Arr(str) {
     var myObject = "jSon=" + str;
     eval(myObject);
 
+    var str = '';
     var arr = [];
     for (var i = 0; i < jSon.length; i++) {
         arr.push([i, jSon[i]]);
+        
+        if (i != 0) str += '<br/>';
+        str +='<i>'+ jSon[i]+ '</i>';
     }
+
+    wardsWin.body.update(str);
+    wardsWin.show();
     return arr;
 }
 
 function change2Str(value) {
     return '"' + value + '"';
+}
+
+function showInfo(reponsewards) {
+    //[{"name":"Mã hành chính","value":"7.6026755E7"},{"name":"Tên","value":"Phường Cô Giang"},{"name":"Số hộ","value":"4185"}]
+    //alert(reponsewards);
+    var jSon;
+    var myObject = "jSon=" + reponsewards;
+    eval(myObject);
+
+    var str = '';
+    for (var i = 0; i < jSon.length; i++) {
+        if (i != 0) str += '<br/>';
+        str += jSon[i].name + ' : '
+                    + '<b>' + jSon[i].value + '</b>';
+
+    }
+
+    infoWin.body.update(str);
+   // infoWin.doLayout();
+    infoWin.show();
 }

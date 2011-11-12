@@ -45,7 +45,11 @@
 
 <div id="winmenu" class="x-hidden"></div>
 <div id="wininfo" class="x-hidden"></div>
+
+<div id="winwards" class="x-hidden"></div>
+
 <div id="search_window" class="x-hidden"></div>
 <div id="test"></div>
+
 </body>
 </html>

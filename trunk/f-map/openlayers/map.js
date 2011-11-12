@@ -76,27 +76,7 @@ function init() {
                                     + ',{"name":"width","value":' + w + '}'
                                     + ',{"name":"height","value":' + h + '}'
                                     + ']';
-        getInfo(actions,
-            function (reponsewards) {
-                //[{"name":"Mã hành chính","value":"7.6026755E7"},{"name":"Tên","value":"Phường Cô Giang"},{"name":"Số hộ","value":"4185"}]
-                //alert(reponsewards);
-                var jSon;
-                var myObject = "jSon=" + reponsewards;
-                eval(myObject);
-
-                var str = '';
-                for (var i = 0; i < jSon.length; i++) {
-                    if (i != 0) str += '<br/>';
-                    str += jSon[i].name + ' : ' 
-                    + '<b>' + jSon[i].value + '</b>';
-
-                }
-
-                infoWin.body.update(str);
-                infoWin.doLayout();
-                infoWin.show();
-            }
-        );
+        getInfo(actions,showInfo);
 
     });
 }
