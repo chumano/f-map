@@ -22,6 +22,9 @@ function init() {
     };
     map = new OpenLayers.Map('map', options);
 
+    // layer for points
+    vectorLayer = new OpenLayers.Layer.Vector("Point Layer");
+
     var pureCoverage = false;
     // setup tiled layer
     var tiled = new OpenLayers.Layer.WMS(
@@ -40,7 +43,8 @@ function init() {
                     }
            );
 
-   map.addLayers([tiled]);
+   map.addLayers([tiled, vectorLayer]);
+   map.addControl(new OpenLayers.Control.DrawFeature(vectorLayer, OpenLayers.Handler.Point));
 
     // build up all controls
     map.addControl(new OpenLayers.Control.PanZoomBar({
