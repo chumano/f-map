@@ -4,17 +4,17 @@ using System.Linq;
 using System.Web;
 
 /// <summary>
-/// Summary description for FeatureInfo
+/// Summary description for AddressModel
 /// </summary>
-public class FeatureInfoItemModel
+public class AddressModel
 {
-	public FeatureInfoItemModel()
+	public AddressModel()
 	{
 		//
 		// TODO: Add constructor logic here
 		//
 	}
 
-    public string name { get; set; }
-    public string value { get; set; }
+    public string SoNha { get; set; }
+    public string TenDuong { get; set; }
 }
