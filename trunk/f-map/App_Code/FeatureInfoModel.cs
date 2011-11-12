@@ -4,17 +4,17 @@ using System.Linq;
 using System.Web;
 
 /// <summary>
-/// Summary description for MapInfo
+/// Summary description for FeatureInfo
 /// </summary>
-public class MapInfo
+public class FeatureInfoItemModel
 {
-	public MapInfo()
+	public FeatureInfoItemModel()
 	{
 		//
 		// TODO: Add constructor logic here
 		//
 	}
 
-    public Layer[] layers { get; set; }
-    public Bound bound { get; set; }
+    public string Name { get; set; }
+    public string Value { get; set; }
 }

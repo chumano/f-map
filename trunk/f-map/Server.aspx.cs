@@ -68,17 +68,17 @@ public partial class Server : System.Web.UI.Page
         string response = DoGetRequest(url);
         string[] array = response.Split(new char[] { '\r', '\n' });
 
-        FeatureInfoItem[] featureInfoItems = new FeatureInfoItem[3];
+        FeatureInfoItemModel[] featureInfoItems = new FeatureInfoItemModel[3];
 
-        featureInfoItems[0] = new FeatureInfoItem();
+        featureInfoItems[0] = new FeatureInfoItemModel();
         featureInfoItems[0].Name = "Mã hành chính";
         featureInfoItems[0].Value = ParseFeatureInfoItem(array[4]);
 
-        featureInfoItems[1] = new FeatureInfoItem();
+        featureInfoItems[1] = new FeatureInfoItemModel();
         featureInfoItems[1].Name = "Tên";
         featureInfoItems[1].Value = ParseFeatureInfoItem(array[6]);
 
-        featureInfoItems[2] = new FeatureInfoItem();
+        featureInfoItems[2] = new FeatureInfoItemModel();
         featureInfoItems[2].Name = "Số hộ";
         featureInfoItems[2].Value = ParseFeatureInfoItem(array[12]);
         
@@ -99,27 +99,28 @@ public partial class Server : System.Web.UI.Page
         DataTable dt = Helper.GetDataTable("select * from MapView where ID = " + mapId);
 
         DataRow row = dt.Rows[0];
-        Bound bound = new Bound();
+        BoundModel bound = new BoundModel();
         bound.MinX = (double)row["MinX"];
         bound.MaxX = (double)row["MaxX"];
         bound.MinY = (double)row["MinY"];
         bound.MaxY = (double)row["MaxY"];
 
         // Get layers for map
-        dt = Helper.GetDataTable("select * from Layer, LayerMap where " + mapId + " = LayerMap.MapID and LayerMap.LayerID = Layer.ID");
-        Layer[] layers = new Layer[dt.Rows.Count];
+        // dt = Helper.GetDataTable("select * from Layer, LayerMap where " + mapId + " = LayerMap.MapID and LayerMap.LayerID = Layer.ID");
+        dt = Helper.GetDataTable("select * from vw_map where MapID = " + mapId);
+        LayerModel[] layers = new LayerModel[dt.Rows.Count];
         for (int i = 0; i < dt.Rows.Count; ++i)
         {
             row = dt.Rows[i];
 
-            layers[i] = new Layer();
-            layers[i].Name = (string)row["Name"];
+            layers[i] = new LayerModel();
             layers[i].LayerName = (string)row["LayerName"];
+            layers[i].Layer = (string)row["Layer"];
             layers[i].StyleName = (string)row["StyleName"];
         }
 
         // Write the response
-        MapInfo mapInfo = new MapInfo();
+        MapInfoModel mapInfo = new MapInfoModel();
         mapInfo.layers = layers;
         mapInfo.bound = bound;
         string response = JsonConvert.SerializeObject(mapInfo);
