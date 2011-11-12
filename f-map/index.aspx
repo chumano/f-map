@@ -6,7 +6,8 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title id='title'>Map Web</title>
-        <!-- ** CSS ** -->
+
+<!-- ** CSS ** -->
         <!-- base library -->
         <link rel="stylesheet" type="text/css" href="css/ext-all.css" />
  
@@ -21,20 +22,17 @@
             }
         </style>
 
-        <!-- ** Javascript ** -->
-        <!-- ExtJS library: base/adapter -->
+<!-- ** Javascript ** -->
+        <!---------- ExtJS library: base/adapter ----------->
         <script type="text/javascript" src="js/ext-base.js"></script>
-        <!-- ExtJS library: all widgets -->
         <script type="text/javascript" src="js/ext-all-debug.js"></script>
- 
-        <script type="text/javascript" src="js/lcombobox.js"></script>
+        
+        <!--window-->
+<%--        <script type="text/javascript" src="js/lcombobox.js"></script>--%>
          <script type="text/javascript" src="js/hello.js"></script>
-
-        <!-- A Localization Script File comes here -->
-        <script type="text/javascript">
-            Ext.onReady(LCombo.app.init, LCombo.app);
-        </script>
-
+        
+        <!-- connect -->
+         <script type="text/javascript" src="js/connect.js"></script>
 
         <%-----------OpenLayers--------------%>
         <script type='text/javascript' src='openlayers/OpenLayers.js'></script>

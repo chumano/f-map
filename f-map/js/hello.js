@@ -8,7 +8,7 @@
 Ext.BLANK_IMAGE_URL = 'images/default/s.gif';
 
 
-LCombo.countries = [
+var countries = [
      ['0', 'Toàn Thành']
     , ['1', 'Quận 1']
     , ['2', 'Quận 2']
@@ -26,7 +26,7 @@ LCombo.countries = [
     , ['TB', 'Quận Tân Bình']
 ];
 
-LCombo.cities = [
+var cities = [
      [1, '0', 'New York']
     , [2, '0', 'Cleveland']
     , [3, '1', 'Austin']
@@ -82,7 +82,7 @@ Ext.onReady(function () {
             valueNotFoundText: 'chumano',
             store: new Ext.data.ArrayStore({
                 fields: ['cid', 'country'],
-                data: LCombo.countries
+                data: countries
             }),
             valueField: 'cid',
             displayField: 'country',
@@ -111,7 +111,7 @@ Ext.onReady(function () {
                 id: 'combo-city',
                 store: new Ext.data.ArrayStore({
                     fields: ['id', 'cid', 'city'],
-                    data: LCombo.cities
+                    data: cities
                 }),
                 valueField: 'id',
                 displayField: 'city',

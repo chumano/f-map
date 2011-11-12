@@ -1,8 +1,39 @@
-﻿function query() {
-    var item = form1.elements["inputText"].value;
-    if (item == "") return;
+﻿var serverURL = 'Server.aspx';
 
-    url = 'http://localhost:15616/WebSite2/Server.aspx?action=TenDuong&u=' + item;
+function getMap(actions) {
+    var url = serverURL + para2Str(actions);
+    req = getAjax();
+
+    req.onreadystatechange = function () {
+
+        if (req.readyState == 4 && req.status == 200) {
+            alert(req.responseText);
+        }
+
+    }
+
+    req.open('GET', url, true);
+    req.send(null);
+}
+
+function getInfo(actions) {
+    var url = serverURL + para2Str(actions);
+    req = getAjax();
+
+    req.onreadystatechange = function () {
+
+        if (req.readyState == 4 && req.status == 200) {
+            alert(req.responseText);
+        }
+
+    }
+    req.open('GET', url, true);
+    req.send(null);
+}
+
+function query(actions) {  
+    var url =  serverURL + para2Str(actions);//?action=TenDuong&u=' + item;
+
     // url = 'http://localhost:8080/geoserver/wms?bbox=-130,24,-66,50&styles=population&Format=image/png&request=GetMap&layers=topp:states&width=550&height=250&srs=EPSG:4326';
     req = getAjax();
 
@@ -57,4 +88,23 @@ function getAjax() {
         XmlHttp = new XMLHttpRequest();
     }
     return XmlHttp;
+}
+
+//actions is an array : [{"name":attrName1,"value":attrValue1},{"name":attrName2,"value":attrValue2}]
+function para2Str(actions) {
+    if (actions == '') return '';
+
+    var jSon;
+    var myObject = "jSon=" + actions;
+    eval(myObject);
+
+    var resultStr = '?';
+    for (var i = 0; i < jSon.length; i++) {
+        if (i != 0)
+            resultStr += '&';
+
+        resultStr += jSon[i].name + '=' + jSon[i].value;
+    }
+
+    return resultStr;
 }
