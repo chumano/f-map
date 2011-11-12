@@ -151,5 +151,55 @@ Ext.onReady(function () {
         x: 100,
         y: 200
     });
-//    infoWin.show();
+    //    infoWin.show();
+
+
+    buttonObject = new Ext.Button({ text: 'Search', height: 40, handler: searchAddress });
+    textField = new Ext.form.TextField({ width: 380, height: 40 });
+    searchWin = new Ext.Window({
+        applyTo: 'search_window',
+        height: 'auto',
+        width: 460,
+        bodyStyle: 'padding: 5px',
+        layout: 'hbox',
+        labelWidth: 50,
+        defaultType: 'field',
+        items: [textField,buttonObject],
+        x: 100,
+        y: 50
+    });
+    searchWin.show();
 });
+
+function searchAddress() {
+    keyword = change2Str(textField.getValue());
+    var actions = '[{"name":"action","value":"SearchAddress"},'
+                    + '{"name":"keyword","value":' + keyword + '}]';
+    getInfo(actions, function (response) {
+        // TODO parse address response
+        var polygonCenterList = "";
+        var parsedJSON = eval('(' + response + ')');
+        for (i = 0; i < parsedJSON.length && i < 10; ++i) {
+            lng = parsedJSON[i].X - 0.74;
+            lat = parsedJSON[i].Y;
+
+            polygonCenterList += lng + ", " + lat + "<br />";
+
+            addPoint(lat, lng);
+        }
+
+        document.getElementById("test").innerHTML = polygonCenterList;
+        // 105.94605, 10.77950
+    });
+}
+
+function addPoint(lng, lat) {
+    var pLayer = new OpenLayers.Layer.Vector("Point Layer");
+    map.addLayer(pLayer);
+    map.addControl(new OpenLayers.Control.DrawFeature(pLayer, OpenLayers.Handler.Point));
+    var point = new OpenLayers.Geometry.Point(lng, lat);
+
+
+    var pFeature = new OpenLayers.Feature.Vector(point, null, null);
+    pLayer.addFeatures([pFeature]);
+}
