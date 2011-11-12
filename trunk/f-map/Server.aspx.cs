@@ -37,6 +37,10 @@ public partial class Server : System.Web.UI.Page
                 case "GetMap":
                     GetMap(Request["map_id"]);
                     break;
+
+                case "GetWards":
+                    GetWards(Request["district_id"]);
+                    break;
             }
         }
     }
@@ -62,6 +66,8 @@ public partial class Server : System.Web.UI.Page
         // Return response string
         return responseStream.ReadToEnd();
     }
+
+    #region GetInfo API
 
     private void GetInfo(string url)
     {
@@ -89,6 +95,10 @@ public partial class Server : System.Web.UI.Page
     {
         return item.Substring(item.IndexOf('=') + 2);
     }
+
+    #endregion
+
+    #region GetMap API
 
     private void GetMap(string mapId)
     {
@@ -126,6 +136,24 @@ public partial class Server : System.Web.UI.Page
         string response = JsonConvert.SerializeObject(mapInfo);
         Response.Write(response);
     }
+
+    #endregion
+
+    #region GetWards API
+
+    private void GetWards(string districtId)
+    {
+        DataTable dt = Helper.GetDataTable2("select * from QUAN" + districtId + "_RG_HCXA");
+        string[] wards = new string[dt.Rows.Count];
+        for (int i = 0; i < dt.Rows.Count; ++i)
+        {
+            wards[i] = (string)dt.Rows[i]["TEN"];
+        }
+
+        Response.Write(JsonConvert.SerializeObject(wards));
+    }
+
+    #endregion
 
     private String samplePostRequest()
     {
