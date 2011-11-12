@@ -13,11 +13,11 @@ Ext.onReady(function () {
         layout: 'fit',
         width: 'auto',
         height: 'auto',
-        closeAction: 'hide',
+        //closeAction: 'hide',
+        closable: false,
+        draggable: false,
         plain: true,
         border: false,
-
-        header: false,
         resizable: false,
         x: 800,
         y: 0
@@ -69,6 +69,7 @@ Ext.onReady(function () {
 
                         //comboCity.store.filter('cid', combo.getValue());
                     }
+                    
                 }
             }
             }
@@ -134,14 +135,13 @@ Ext.onReady(function () {
 
     });
 
-    labelInfo = new Ext.form.Label({
-        text: 'chumano'
-    });
     infoWin = new Ext.Window({
         applyTo: 'wininfo',
         layout: 'fit',
+        title: 'Thông tin',
         width: 200,
         height: 100,
+        draggable: false,
         closeAction: 'hide',
         plain: true,
         border: false,
@@ -149,8 +149,25 @@ Ext.onReady(function () {
         resizable: false,
 
         x: 100,
+        y: 0
+    });
+
+    wardsWin = new Ext.Window({
+        applyTo: 'winwards',
+        layout: 'fit',
+        title: 'Danh sách các phường',
+        width: 200,
+        height: 200,
+        closeAction: 'hide',
+        plain: true,
+        border: false,
+        header: false,
+        resizable: false,
+
+        x: window.innerWidth-200,
         y: 200
     });
+
     //    infoWin.show();
 
 
@@ -207,7 +224,3 @@ function addPoints(points) {
     vectorLayer.addFeatures(points);
 }
 
-function addPoint(lng, lat) {
-    var point = new OpenLayers.Geometry.Point(lng, lat);
-    vectorLayer.addFeatures([new OpenLayers.Feature.Vector(point, null, null)]);
-}
