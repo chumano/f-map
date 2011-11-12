@@ -39,6 +39,7 @@ function query(actions) {
     //?action=GetWards&district_id=1
     //?action=GetMap&map_id=1
     //?action=GetInfo&bbox=105.922404,10.756404,105.968596,10.802596&x=234&y=430&layer_name=sde:QUAN1_RG_HCXA&width=550&height=550
+    //?action=SearchAddress&keyword=102%20/11,Tr%C3%A2%CC%80n%20Quang%20Kha%CC%89i
     // url = 'http://localhost:8080/geoserver/wms?bbox=-130,24,-66,50&styles=population&Format=image/png&request=GetMap&layers=topp:states&width=550&height=250&srs=EPSG:4326';
     req = getAjax();
 
