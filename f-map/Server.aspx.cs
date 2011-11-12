@@ -41,6 +41,10 @@ public partial class Server : System.Web.UI.Page
                 case "GetWards":
                     GetWards(Request["district_id"]);
                     break;
+
+                case "SearchAddress":
+                    SearchAddress(Request["keyword"]);
+                    break;
             }
         }
     }
@@ -77,16 +81,16 @@ public partial class Server : System.Web.UI.Page
         FeatureInfoItemModel[] featureInfoItems = new FeatureInfoItemModel[3];
 
         featureInfoItems[0] = new FeatureInfoItemModel();
-        featureInfoItems[0].Name = "Mã hành chính";
-        featureInfoItems[0].Value = ParseFeatureInfoItem(array[4]);
+        featureInfoItems[0].name = "Mã hành chính";
+        featureInfoItems[0].value = ParseFeatureInfoItem(array[4]);
 
         featureInfoItems[1] = new FeatureInfoItemModel();
-        featureInfoItems[1].Name = "Tên";
-        featureInfoItems[1].Value = ParseFeatureInfoItem(array[6]);
+        featureInfoItems[1].name = "Tên";
+        featureInfoItems[1].value = ParseFeatureInfoItem(array[6]);
 
         featureInfoItems[2] = new FeatureInfoItemModel();
-        featureInfoItems[2].Name = "Số hộ";
-        featureInfoItems[2].Value = ParseFeatureInfoItem(array[12]);
+        featureInfoItems[2].name = "Số hộ";
+        featureInfoItems[2].value = ParseFeatureInfoItem(array[12]);
         
         Response.Write(JsonConvert.SerializeObject(featureInfoItems));
     }
@@ -151,6 +155,32 @@ public partial class Server : System.Web.UI.Page
         }
 
         Response.Write(JsonConvert.SerializeObject(wards));
+    }
+
+    #endregion
+
+    #region SearchAddress API
+
+    private void SearchAddress(string keyword)
+    {
+        keyword = NameUtil.GetInstance().Convert(keyword);
+        string[] keys = keyword.Split(',');
+        string query = String.Format("select distinct SoNha, TenConDuong from QUAN1 where SoNha like '%{0}%' and TenConDuong2 like '%{1}%'", keys[0], keys[1]);
+        DataTable dt = Helper.GetDataTable2(query);
+        int len = dt.Rows.Count;
+        AddressModel[] addresses = new AddressModel[len];
+        DataRow row = null;
+        for (int i = 0; i < len; ++i)
+        {
+            row = dt.Rows[i];
+
+            addresses[i] = new AddressModel();
+            addresses[i].SoNha = (string)row["SoNha"];
+            addresses[i].TenDuong = (string)row["TenConDuong"];
+        }
+
+        string response = JsonConvert.SerializeObject(addresses);
+        Response.Write(response);
     }
 
     #endregion
