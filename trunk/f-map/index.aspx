@@ -10,17 +10,6 @@
 <!-- ** CSS ** -->
         <!-- base library -->
         <link rel="stylesheet" type="text/css" href="css/ext-all.css" />
- 
-        <!-- overrides to base library -->
-        <style type="text/css">
-            #actions li {
-	            margin:.3em;
-            }
-            #actions li a {
-	            color:#666688;
-	            text-decoration:none;
-            }
-        </style>
 
 <!-- ** Javascript ** -->
         <!---------- ExtJS library: base/adapter ----------->
@@ -28,8 +17,9 @@
         <script type="text/javascript" src="js/ext-all-debug.js"></script>
         
         <!--window-->
-<%--        <script type="text/javascript" src="js/lcombobox.js"></script>--%>
-         <script type="text/javascript" src="js/hello.js"></script>
+        <%--<script type="text/javascript" src="js/lcombobox.js"></script>--%>
+         <script type="text/javascript" src="openlayers/mapinfo.js"></script>
+         <script type="text/javascript" src="js/interface.js"></script>
         
         <!-- connect -->
          <script type="text/javascript" src="js/connect.js"></script>
@@ -40,7 +30,7 @@
     </head>
 
 
-<body onload='init();'>
+<body onload='init()'>
 <div id='map' style='width: 100%; height:628px;'></div>
 <div id="wrapper">
     <div id="location" style="position:fixed; bottom:0px; right:0px; z-index:1001"></div>
@@ -48,10 +38,9 @@
 </div>
 
 <div style="position:fixed; top:20px; right:20px; z-index:1001">
-<input type="button" id="show-btn" value="Hello World" />
+<input type="button" id="show-btn" value="menu" />
 </div>
 
-<div id="hello-win" class="x-hidden">
-</div>
+<div id="winmenu" class="x-hidden"></div>
 </body>
 </html>
