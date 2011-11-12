@@ -177,29 +177,37 @@ function searchAddress() {
                     + '{"name":"keyword","value":' + keyword + '}]';
     getInfo(actions, function (response) {
         // TODO parse address response
-        var polygonCenterList = "";
+        var diffLng = 0;
+        var diffLat = 0;
         var parsedJSON = eval('(' + response + ')');
+        var polygonCenterList = "";
+        var points = [];
         for (i = 0; i < parsedJSON.length && i < 10; ++i) {
-            lng = parsedJSON[i].X - 0.74;
-            lat = parsedJSON[i].Y;
+            lng = parsedJSON[i].X - 0.74630393;
+            lat = parsedJSON[i].Y - (-0.00523917);
+
+            diffLng += lng - 105.94731;
+            diffLat += lat - 10.77824;
 
             polygonCenterList += lng + ", " + lat + "<br />";
 
-            addPoint(lat, lng);
+            points.push(new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(lng, lat), null, null));
+
+            // addPoint(lng, lat);
         }
 
+        addPoints(points);
+
         document.getElementById("test").innerHTML = polygonCenterList;
-        // 105.94605, 10.77950
+        // addPoint(105.94731, 10.77824);
     });
 }
 
+function addPoints(points) {
+    vectorLayer.addFeatures(points);
+}
+
 function addPoint(lng, lat) {
-    var pLayer = new OpenLayers.Layer.Vector("Point Layer");
-    map.addLayer(pLayer);
-    map.addControl(new OpenLayers.Control.DrawFeature(pLayer, OpenLayers.Handler.Point));
     var point = new OpenLayers.Geometry.Point(lng, lat);
-
-
-    var pFeature = new OpenLayers.Feature.Vector(point, null, null);
-    pLayer.addFeatures([pFeature]);
+    vectorLayer.addFeatures([new OpenLayers.Feature.Vector(point, null, null)]);
 }
