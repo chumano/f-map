@@ -6,9 +6,9 @@ using System.Web;
 /// <summary>
 /// Summary description for Bound
 /// </summary>
-public class Bound
+public class BoundModel
 {
-	public Bound()
+	public BoundModel()
 	{
 		//
 		// TODO: Add constructor logic here
