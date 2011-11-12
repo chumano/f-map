@@ -8,52 +8,122 @@ using System.Data;
 using System.Text;
 using System.Net;
 using System.IO;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json;
+using SmartLib;
 
 public partial class Server : System.Web.UI.Page
 {
-    private String sampleGetRequest()
+    protected void Page_Load(object sender, EventArgs e)
     {
-        HttpWebRequest request = null;
+        if (Request["action"] != null && Request["action"].Trim() != "")
+        {
+            switch (Request["action"])
+            {
+                case "GetInfo":
+                    // http://localhost:8080/geoserver/wms?REQUEST=GetFeatureInfo&BBOX={0}&SERVICE=WMS&VERSION=1.1.1&X={1}&Y={2}
+                    // &INFO_FORMAT=text/plain&QUERY_LAYERS={3}&FEATURE_COUNT=50&Layers={4}&WIDTH={5}&HEIGHT={6}&srs=EPSG:4326
+                    string url = String.Format(Config.URL_GET_INFO,
+                                                Request["bbox"],
+                                                Request["x"],
+                                                Request["y"],
+                                                Request["layer_name"],
+                                                Request["layer_name"],
+                                                Request["width"],
+                                                Request["height"]);
+                    GetInfo(url);
+                    break;
 
-        string url = "http://localhost:8080/geoserver/wms?bbox=-130,24,-66,50&styles=population&Format=image/png&request=GetMap&layers=topp:states&width=550&height=250&srs=EPSG:4326";
+                case "GetMap":
+                    GetMap(Request["map_id"]);
+                    break;
+            }
+        }
+    }
 
+    private string DoGetRequest(string url)
+    {
         // Create web request
-
-        request = (HttpWebRequest)WebRequest.Create(url);
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 
         // Set value for request headers
-
         request.Method = "GET";
-
         request.ProtocolVersion = HttpVersion.Version11;
-
         request.AllowAutoRedirect = false;
-
         request.Accept = "*/*";
-
         request.UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727)";
-
         request.Headers.Add("Accept-Language", "en-us");
-
         request.KeepAlive = true;
 
-        StreamReader responseStream = null;
-
-        HttpWebResponse webResponse = null;
-
-        string webResponseStream = string.Empty;
-
         // Get response for http web request
+        HttpWebResponse webResponse = (HttpWebResponse)request.GetResponse();
+        StreamReader responseStream = new StreamReader(webResponse.GetResponseStream());
 
-        webResponse = (HttpWebResponse)request.GetResponse();
+        // Return response string
+        return responseStream.ReadToEnd();
+    }
 
-        responseStream = new StreamReader(webResponse.GetResponseStream());
+    private void GetInfo(string url)
+    {
+        string response = DoGetRequest(url);
+        string[] array = response.Split(new char[] { '\r', '\n' });
 
-        // Read web response into string
+        FeatureInfoItem[] featureInfoItems = new FeatureInfoItem[3];
 
-        webResponseStream = responseStream.ReadToEnd();
+        featureInfoItems[0] = new FeatureInfoItem();
+        featureInfoItems[0].Name = "Mã hành chính";
+        featureInfoItems[0].Value = ParseFeatureInfoItem(array[4]);
 
-        return webResponseStream;
+        featureInfoItems[1] = new FeatureInfoItem();
+        featureInfoItems[1].Name = "Tên";
+        featureInfoItems[1].Value = ParseFeatureInfoItem(array[6]);
+
+        featureInfoItems[2] = new FeatureInfoItem();
+        featureInfoItems[2].Name = "Số hộ";
+        featureInfoItems[2].Value = ParseFeatureInfoItem(array[12]);
+        
+        Response.Write(JsonConvert.SerializeObject(featureInfoItems));
+    }
+
+    private string ParseFeatureInfoItem(string item)
+    {
+        return item.Substring(item.IndexOf('=') + 2);
+    }
+
+    private void GetMap(string mapId)
+    {
+        // TODO test 
+        // mapId = "1";
+
+        // Get map bound
+        DataTable dt = Helper.GetDataTable("select * from MapView where ID = " + mapId);
+
+        DataRow row = dt.Rows[0];
+        Bound bound = new Bound();
+        bound.MinX = (double)row["MinX"];
+        bound.MaxX = (double)row["MaxX"];
+        bound.MinY = (double)row["MinY"];
+        bound.MaxY = (double)row["MaxY"];
+
+        // Get layers for map
+        dt = Helper.GetDataTable("select * from Layer, LayerMap where " + mapId + " = LayerMap.MapID and LayerMap.LayerID = Layer.ID");
+        Layer[] layers = new Layer[dt.Rows.Count];
+        for (int i = 0; i < dt.Rows.Count; ++i)
+        {
+            row = dt.Rows[i];
+
+            layers[i] = new Layer();
+            layers[i].Name = (string)row["Name"];
+            layers[i].LayerName = (string)row["LayerName"];
+            layers[i].StyleName = (string)row["StyleName"];
+        }
+
+        // Write the response
+        MapInfo mapInfo = new MapInfo();
+        mapInfo.layers = layers;
+        mapInfo.bound = bound;
+        string response = JsonConvert.SerializeObject(mapInfo);
+        Response.Write(response);
     }
 
     private String samplePostRequest()
@@ -87,89 +157,4 @@ public partial class Server : System.Web.UI.Page
         return result;
     }
 
-    MSSQLConnection conn = new MSSQLConnection("BanDoSG", "sa", "371319855");
-    protected void Page_Load(object sender, EventArgs e)
-    {
-        // Put user code to initialize the page here
-        if (Request["action"] != null && Request["action"].Trim() != "")
-        {
-            switch (Request["action"])
-            {
-                case "TenDuong":
-                    //processGetTenDuong();
-
-                    
-
-                    Response.Write(samplePostRequest());
-
-                    break;
-                
-                default:
-                    Response.Write("chumano -kaka");
-                    break;
-            }
-        }
-
-    }
-
-    protected void processGetTenDuong()
-    {
-        if (Request.QueryString.Count == 0)
-            return;
-
-        string ten = Request.QueryString["u"].ToString();
-
-        string sqlStr = "Select TenConDuong from ConDuong Where TenConDuong like " +"'" + ten + "%'";
-        DataTable tbl = conn.Select(sqlStr);
-
-        if (tbl.Rows.Count > 0)
-        {
-            string jSon = JSON_DataTable(tbl);
-            Response.Write(jSon);
-        }
-        else
-            Response.Write("hello");
-    }
-
-    public string JSON_DataTable(DataTable dt)
-    {
-
-        StringBuilder JsonString = new StringBuilder();
-
-        JsonString.Append("{ ");
-        JsonString.Append("\"TABLE\":[{ ");
-        JsonString.Append("\"ROW\":[ ");
-
-        for (int i = 0; i < dt.Rows.Count; i++)
-        {
-
-            JsonString.Append("{ ");
-            JsonString.Append("\"COL\":[ ");
-
-            for (int j = 0; j < dt.Columns.Count; j++)
-            {
-                if (j < dt.Columns.Count - 1)
-                {
-                    JsonString.Append("{" + "\"DATA\":\"" +
-                                      dt.Rows[i][j].ToString() + "\"},");
-                }
-                else if (j == dt.Columns.Count - 1)
-                {
-                    JsonString.Append("{" + "\"DATA\":\"" +
-                                      dt.Rows[i][j].ToString() + "\"}");
-                }
-            }
-            /*end Of String*/
-            if (i == dt.Rows.Count - 1)
-            {
-                JsonString.Append("]} ");
-            }
-            else
-            {
-                JsonString.Append("]}, ");
-            }
-        }
-        JsonString.Append("]}]}");
-        return JsonString.ToString();
-    }
 }
