@@ -8,6 +8,7 @@ OpenLayers.IMAGE_RELOAD_ATTEMPTS = 5;
 OpenLayers.DOTS_PER_INCH = 25.4 / 0.28;
 
 function init() {
+    
 
     // if this is just a coverage or a group of them, disable a few items,
     // and default to jpeg format
