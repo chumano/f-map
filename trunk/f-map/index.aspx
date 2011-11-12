@@ -12,6 +12,8 @@
         <link rel="stylesheet" type="text/css" href="css/ext-all.css" />
 
 <!-- ** Javascript ** -->
+        <script type="text/javascript" src="js/flib.js"></script>
+        <script type="text/javascript" src="js/globalvar.js"></script>
         <!---------- ExtJS library: base/adapter ----------->
         <script type="text/javascript" src="js/ext-base.js"></script>
         <script type="text/javascript" src="js/ext-all-debug.js"></script>
@@ -42,5 +44,6 @@
 </div>
 
 <div id="winmenu" class="x-hidden"></div>
+<div id="wininfo" class="x-hidden"></div>
 </body>
 </html>
