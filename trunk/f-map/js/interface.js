@@ -134,12 +134,14 @@ Ext.onReady(function () {
 
     });
 
-
+    labelInfo = new Ext.form.Label({
+        text: 'chumano'
+    });
     infoWin = new Ext.Window({
         applyTo: 'wininfo',
         layout: 'fit',
-        width: 100,
-        height: 100,
+        width: 'auto',
+        height: 'auto',
         closeAction: 'hide',
         plain: true,
         border: false,
@@ -147,13 +149,7 @@ Ext.onReady(function () {
         resizable: false,
 
         x: 100,
-        y: 200,
-        items: [
-            new Ext.form.Label({
-                fieldLabel: 'First Name'
-            })
-        ]
+        y: 200
     });
-
-    infoWin.show();
+//    infoWin.show();
 });

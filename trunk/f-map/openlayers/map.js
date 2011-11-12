@@ -62,7 +62,7 @@ function init() {
 
         var bbox = change2Str(map.getExtent().toBBOX());
         var x = e.xy.x, y = e.xy.y;
-        var layer =  change2Str('sde:QUAN1_RG_HCXA');
+        var layer = change2Str('sde:QUAN1_RG_HCXA');
         var w = map.size.w, h = map.size.h;
         var actions = '[{"name":"action","value":"GetInfo"}'
                                     + ',{"name":"bbox","value":' + bbox + '}'
@@ -74,7 +74,26 @@ function init() {
                                     + ']';
         getInfo(actions,
             function (reponsewards) {
-                alert(reponsewards);
+                //[{"name":"Mã hành chính","value":"7.6026755E7"},{"name":"Tên","value":"Phường Cô Giang"},{"name":"Số hộ","value":"4185"}]
+                //alert(reponsewards);
+                var jSon;
+                var myObject = "jSon=" + reponsewards;
+                eval(myObject);
+
+                label = new Ext.form.Label({
+                    text: 'chumano'
+                });
+                
+                var str = '';
+                for (var i = 0; i < jSon.length; i++) {
+                    str += jSon[i].name + ' : ' + jSon[i].value;
+
+                }
+                label.text = str;
+                infoWin.items.add(label);
+                //                infoWin.items = {label};
+                infoWin.doLayout();
+                infoWin.show();
             }
         );
 
