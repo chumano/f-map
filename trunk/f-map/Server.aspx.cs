@@ -11,6 +11,7 @@ using System.IO;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json;
 using SmartLib;
+using System.Text.RegularExpressions;
 
 public partial class Server : System.Web.UI.Page
 {
@@ -226,6 +227,86 @@ public partial class Server : System.Web.UI.Page
             }
         }
         return result;
+    }
+
+    public int getNumberFromText(string txt)
+    {
+        System.Text.RegularExpressions.Regex re = new Regex(@"\d+");
+        Match m = re.Match(txt);
+        if (m.Success)
+        {
+            return Convert.ToInt32(m.Value);
+        }
+        else
+        {
+            return 50000;
+        }
+    }
+
+    public bool OddOrEven(int number)
+    {
+        return ((number & 1) != 0) ? true : false;
+    } 
+
+    public string checkAddress(string NoAdd, string StrAdd, string Ward)
+    {
+        string sqlStr = "Select B.BangNha, A.MaDuong from NHA_HUYEN A, HUYEN B, CONDUONG C WHERE A.MaDuong = C.IDConDuong AND A.MaQuan=B.IDHuyen AND C.TenKhongDau = N'" + StrAdd + "' AND A.MaPhuong=N'" + Ward + "'";
+        DataTable tbl = Helper.GetDataTable(sqlStr);
+
+        string _oid = "1", _BangNha = "NHA_Q1";
+        DataTable tbl2 = null;
+        for (int i = 0; i < tbl.Rows.Count; i++)
+        {
+            _BangNha = tbl.Rows[i][0].ToString();
+            string _MaDuong = tbl.Rows[i][1].ToString();
+            tbl2 = Helper.GetDataTable("Select X, Y, SoNha From " + _BangNha + " WHERE MaPhuong=N'" + Ward + "' AND IDConDuong='" + _MaDuong + "' AND SoNha='" + NoAdd + "'");
+            if (tbl2.Rows.Count > 0)
+            {
+                return tbl2.Rows[0]["X"].ToString() + "," + tbl2.Rows[0]["Y"].ToString();
+            }
+        }
+        //không có địa chỉ giống thì tìm gần giống        
+        for (int i = 0; i < tbl.Rows.Count; i++)
+        {
+            _BangNha = tbl.Rows[i][0].ToString();
+            string _MaDuong = tbl.Rows[i][1].ToString();
+            string _SoNha = "";
+
+            int min = 50000;
+            tbl2 = Helper.GetDataTable("Select oid, SoNha, X, Y From " + _BangNha + " WHERE MaPhuong=N'" + Ward + "' AND IDConDuong='" + _MaDuong + "'");
+            for (int j = 0; j < tbl2.Rows.Count; j++)
+            {
+                _SoNha = tbl2.Rows[j]["SoNha"].ToString();
+                if (_SoNha.IndexOf('/') == -1)
+                {
+                    int _SoNhaInt = getNumberFromText(_SoNha);
+                    int _NoAddInt = getNumberFromText(NoAdd);
+                    if (_SoNhaInt == _NoAddInt)
+                    {
+                        //ko tìm ra địa chỉ đúng thì tìm ngoài đầu hẻm
+                        _oid = tbl2.Rows[j]["oid"].ToString();
+                        tbl2 = Helper.GetDataTable("Select X, Y From " + _BangNha + " WHERE oid='" + _oid + "'");
+                        if (tbl2.Rows.Count > 0)
+                            return tbl2.Rows[0]["X"].ToString() + "," + tbl2.Rows[0]["Y"].ToString();
+                    }
+                    else if (!OddOrEven(Math.Abs(_SoNhaInt - _NoAddInt)) && (min > Math.Abs(_SoNhaInt - _NoAddInt)))
+                    {
+                        min = Math.Abs(_SoNhaInt - _NoAddInt);
+                        _oid = tbl2.Rows[j]["oid"].ToString();
+
+                    }
+                }
+            }
+        }
+        ////tìm địa chỉ gần địa chỉ cần tìm nhất
+        tbl2 = Helper.GetDataTable("Select X, Y, SoNha From " + _BangNha + " WHERE  oid='" + _oid + "'");
+        if (tbl2.Rows.Count > 0)
+        {
+            return tbl2.Rows[0]["X"].ToString() + "," + tbl2.Rows[0]["Y"].ToString();
+        }
+        else
+            return "";
+
     }
 
 }
