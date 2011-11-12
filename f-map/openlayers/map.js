@@ -1,15 +1,9 @@
-﻿var map;
-var tiled;
-var pureCoverage = false;
-
-// pink tile avoidance
+﻿// pink tile avoidance
 OpenLayers.IMAGE_RELOAD_ATTEMPTS = 5;
 // make OL compute scale according to WMS spec
 OpenLayers.DOTS_PER_INCH = 25.4 / 0.28;
 
 function init() {
-    
-
     // if this is just a coverage or a group of them, disable a few items,
     // and default to jpeg format
     format = 'image/png';
@@ -28,8 +22,9 @@ function init() {
     };
     map = new OpenLayers.Map('map', options);
 
+    var pureCoverage = false;
     // setup tiled layer
-    tiled = new OpenLayers.Layer.WMS(
+    var tiled = new OpenLayers.Layer.WMS(
                     "Geoserver layers", "http://localhost:8080/geoserver/wms",
                     {
                         LAYERS: 'sde:QUAN1_RG_HCXA',
@@ -56,5 +51,32 @@ function init() {
     map.addControl(new OpenLayers.Control.MousePosition({ element: $('location') }));
     map.zoomToExtent(bounds);
 
+    map.events.register('click', map, function (e) {
+        //BBOX: map.getExtent().toBBOX(),
+        //X: e.xy.x,
+        //Y: e.xy.y,
+        //QUERY_LAYERS: map.layers[0].params.LAYERS,
+        //Layers: 'sde:QUAN1_RG_HCXA',
+        //WIDTH: map.size.w,
+        //HEIGHT: map.size.h,
 
+        var bbox = change2Str(map.getExtent().toBBOX());
+        var x = e.xy.x, y = e.xy.y;
+        var layer =  change2Str('sde:QUAN1_RG_HCXA');
+        var w = map.size.w, h = map.size.h;
+        var actions = '[{"name":"action","value":"GetInfo"}'
+                                    + ',{"name":"bbox","value":' + bbox + '}'
+                                    + ',{"name":"x","value":' + x + '}'
+                                    + ',{"name":"y","value":' + y + '}'
+                                    + ',{"name":"layer_name","value":' + layer + '}'
+                                    + ',{"name":"width","value":' + w + '}'
+                                    + ',{"name":"height","value":' + h + '}'
+                                    + ']';
+        getInfo(actions,
+            function (reponsewards) {
+                alert(reponsewards);
+            }
+        );
+
+    });
 }

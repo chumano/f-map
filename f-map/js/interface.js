@@ -7,9 +7,8 @@
 
 Ext.BLANK_IMAGE_URL = 'images/default/s.gif';
 
-
 Ext.onReady(function () {
-    var win = new Ext.Window({
+    menuWin = new Ext.Window({
         applyTo: 'winmenu',
         layout: 'fit',
         width: 'auto',
@@ -126,13 +125,35 @@ Ext.onReady(function () {
 
     button.on('click', function () {
         // create the window on the first click and reuse on subsequent clicks
-        if (win.hidden) {
-            win.show();
-
+        if (menuWin.hidden) {
+            menuWin.show();
         }
         else {
-            win.hide();
+            menuWin.hide();
         }
 
     });
+
+
+    infoWin = new Ext.Window({
+        applyTo: 'wininfo',
+        layout: 'fit',
+        width: 100,
+        height: 100,
+        closeAction: 'hide',
+        plain: true,
+        border: false,
+        header: false,
+        resizable: false,
+
+        x: 100,
+        y: 200,
+        items: [
+            new Ext.form.Label({
+                fieldLabel: 'First Name'
+            })
+        ]
+    });
+
+    infoWin.show();
 });
