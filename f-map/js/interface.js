@@ -22,50 +22,53 @@ Ext.onReady(function () {
         resizable: false,
         x: 800,
         y: 0
-
-        //        items: new Ext.TabPanel({
-        //            applyTo: 'hello-tabs',
-        //            autoTabs: true,
-        //            activeTab: 1,
-        //            deferredRender: false,
-        //            border: false
-        //        }),
-
-        //        buttons: [{
-        //            text: 'Submit',
-        //            disabled: true
-        //        }, {
-        //            text: 'Close',
-        //            handler: function () {
-        //                win.hide();
-        //            }
-        //        }]
-
         , items: [new Ext.form.ComboBox({
             typeAhead: true,
             triggerAction: 'all',
             lazyRender: true,
             mode: 'local',
-            id: 'combo-country',
+            id: 'combo-district',
             valueNotFoundText: 'chumano',
             store: new Ext.data.ArrayStore({
-                fields: ['cid', 'country'],
+                fields: ['cid', 'district'],
                 data: districts
             }),
             valueField: 'cid',
-            displayField: 'country',
+            displayField: 'district',
             listeners: { select: {
                 fn: function (combo, value) {
-                    var comboCity = Ext.getCmp('combo-city');
+                    //get map
+
+
+                    //update combo-ward
+                    var comboWard = Ext.getCmp('combo-ward');
+                    comboWard.clearValue();
+
                     if (combo.getValue() == '0') {
-                       // alert("AAA");
-                        comboCity.hide();
-                        
+                        // alert("AAA");
+                        var comboWard = Ext.getCmp('combo-ward');
+                        comboWard.hide();
+
                     }
                     else {
-                        comboCity.show();
-                        comboCity.clearValue();
-                        comboCity.store.filter('cid', combo.getValue());
+                        comboWard.show();
+                        if (combo.getValue() != 1) {
+                            comboWard.store = null;
+                            alert("Chưa có dữ liệu");
+                            return;
+                        }
+
+                        var actions = '[{"name":"action","value":"GetWards"},{"name":"district_id","value":' + combo.getValue() + '}]';
+                        getInfo(actions,
+                            function (reponsewards) {
+                                    comboWard.store = new Ext.data.ArrayStore({
+                                    fields: ['id', 'ward'],
+                                    data: str2Arr(reponsewards)
+                                });
+                            }
+                        );
+
+                        //comboCity.store.filter('cid', combo.getValue());
                     }
                 }
             }
@@ -76,17 +79,17 @@ Ext.onReady(function () {
                 triggerAction: 'all',
                 lazyRender: true,
                 mode: 'local',
-                id: 'combo-city',
+                id: 'combo-ward',
                 hidden: true,
                 store: new Ext.data.ArrayStore({
-                    fields: ['id', 'cid', 'city'],
+                    fields: ['id', 'ward'],
                     data: wards
                 }),
                 valueField: 'id',
-                displayField: 'city',
+                displayField: 'ward',
                 listeners: { select: {
                     fn: function (combo, value) {
-                        alert("aaa");
+                        // alert("aaa");
                     }
                 }
                 }
@@ -95,7 +98,7 @@ Ext.onReady(function () {
         ]
     });
 
-    var comboCountry = Ext.getCmp('combo-country');
+    var comboCountry = Ext.getCmp('combo-district');
     comboCountry.setValue('0');
     //win.show(this);
     var button = Ext.get('show-btn');

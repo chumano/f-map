@@ -15,15 +15,18 @@ function getMap(actions) {
     req.open('GET', url, true);
     req.send(null);
 }
+function func1(a) {
+    alert(a);
+}
 
-function getInfo(actions) {
+function getInfo(actions, func) {
     var url = serverURL + para2Str(actions);
     req = getAjax();
 
     req.onreadystatechange = function () {
-
         if (req.readyState == 4 && req.status == 200) {
-            alert(req.responseText);
+            func(req.responseText);
+
         }
 
     }
@@ -33,9 +36,9 @@ function getInfo(actions) {
 
 function query(actions) {  
     var url =  serverURL + para2Str(actions);//?action=TenDuong&u=' + item;
-    //http://localhost:50750/f-map/Server.aspx?action=GetWards&district_id=1
-    //[2:46:15 PM] CondorHero89: http://localhost:50750/f-map/Server.aspx?action=GetMap&map_id=1
-    //[2:46:23 PM] CondorHero89: http://localhost:50750/f-map/Server.aspx?action=GetInfo&bbox=105.922404,10.756404,105.968596,10.802596&x=234&y=430&layer_name=sde:QUAN1_RG_HCXA&width=550&height=550
+    //?action=GetWards&district_id=1
+    //?action=GetMap&map_id=1
+    //?action=GetInfo&bbox=105.922404,10.756404,105.968596,10.802596&x=234&y=430&layer_name=sde:QUAN1_RG_HCXA&width=550&height=550
     // url = 'http://localhost:8080/geoserver/wms?bbox=-130,24,-66,50&styles=population&Format=image/png&request=GetMap&layers=topp:states&width=550&height=250&srs=EPSG:4326';
     req = getAjax();
 
@@ -109,4 +112,16 @@ function para2Str(actions) {
     }
 
     return resultStr;
+}
+
+function str2Arr(str) {
+    var jSon;
+    var myObject = "jSon=" + str;
+    eval(myObject);
+
+    var arr = [];
+    for (var i = 0; i < jSon.length; i++) {
+        arr.push( [i,jSon[i]] );
+    }
+    return arr;
 }
