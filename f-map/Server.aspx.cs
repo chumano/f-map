@@ -229,7 +229,7 @@ public partial class Server : System.Web.UI.Page
         return result;
     }
 
-    public int getNumberFromText(string txt)
+    private int getNumberFromText(string txt)
     {
         System.Text.RegularExpressions.Regex re = new Regex(@"\d+");
         Match m = re.Match(txt);
@@ -243,12 +243,12 @@ public partial class Server : System.Web.UI.Page
         }
     }
 
-    public bool OddOrEven(int number)
+    private bool OddOrEven(int number)
     {
         return ((number & 1) != 0) ? true : false;
     } 
 
-    public string checkAddress(string NoAdd, string StrAdd, string Ward)
+    private string checkAddress(string NoAdd, string StrAdd, string Ward)
     {
         string sqlStr = "Select B.BangNha, A.MaDuong from NHA_HUYEN A, HUYEN B, CONDUONG C WHERE A.MaDuong = C.IDConDuong AND A.MaQuan=B.IDHuyen AND C.TenKhongDau = N'" + StrAdd + "' AND A.MaPhuong=N'" + Ward + "'";
         DataTable tbl = Helper.GetDataTable(sqlStr);

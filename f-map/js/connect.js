@@ -1,12 +1,16 @@
 ﻿var serverURL = 'Server.aspx';
 
 function getInfo(actions, func) {
+    mask = new Ext.LoadMask(Ext.getBody(), { msg: "Đang tải..." });
+    mask.show();
+
     var url = serverURL + para2Str(actions);
     req = getAjax();
 
     req.onreadystatechange = function () {
         if (req.readyState == 4 && req.status == 200) {
             func(req.responseText);
+            mask.hide();
         }
 
     }
@@ -14,11 +18,40 @@ function getInfo(actions, func) {
     req.send(null);
 }
 
-function changeMap(response) {
-    if (mapid != 1) {
-        alert('Run');
-        return;
+function updateInfo() {
+    var comboWard = Ext.getCmp('combo-ward');
+    comboWard.clearValue();
+
+    if (mapid == 0) {//toan thanh
+        comboWard.hide();
+
     }
+    else {
+        comboWard.show();
+        if (mapid != 1) {
+            comboWard.store = null;
+            alert("Chưa có dữ liệu");
+            return;
+        }
+
+        var actions = '[{"name":"action","value":"GetWards"},{"name":"district_id","value":' + mapid + '}]';
+        getInfo(actions,
+                            function (reponsewards) {
+                                comboWard.store = new Ext.data.ArrayStore({
+                                    fields: ['id', 'ward'],
+                                    data: str2Arr(reponsewards)
+                                });
+                            }
+                        );
+
+        //comboCity.store.filter('cid', combo.getValue());
+    }
+}
+
+function changeMap(response) {
+    //test response
+
+    ///////////
     var jSon;
     var myObject = "jSon=" + response;
     eval(myObject);
@@ -59,35 +92,25 @@ function changeMap(response) {
     map.zoomToExtent(bounds);
 
     //////////////////////////////////////////////////////////////////
-    //update combo-ward
-    var comboWard = Ext.getCmp('combo-ward');
-    comboWard.clearValue();
+    //update infor
+    //updateInfo();
+    var actions = '[{"name":"action","value":"GetWards"},{"name":"district_id","value":' + mapid + '}]';
+    getInfo(actions,
+        function (reponse) {
+            var jSon;
+            var myObject = "jSon=" + reponse;
+            eval(myObject);
 
-    if (mapid == 0) {//toan thanh
-        // alert("AAA");
-        comboWard.hide();
+            var str = '';
+            for (var i = 0; i < jSon.length; i++) {
+                if (i != 0) str += '<br/>';
+                str += '<i>' + jSon[i] + '</i>';
+            }
 
-    }
-    else {
-        comboWard.show();
-        if (mapid != 1) {
-            comboWard.store = null;
-            alert("Chưa có dữ liệu");
-            return;
+            tabPanel.setActiveTab(1);
+            tabInfo.update(str);
         }
-
-        var actions = '[{"name":"action","value":"GetWards"},{"name":"district_id","value":' + mapid + '}]';
-        getInfo(actions,
-                            function (reponsewards) {
-                                comboWard.store = new Ext.data.ArrayStore({
-                                    fields: ['id', 'ward'],
-                                    data: str2Arr(reponsewards)
-                                });
-                            }
-                        );
-
-        //comboCity.store.filter('cid', combo.getValue());
-    }
+    );
 }
 
 function changeMapRequest(mid) {
