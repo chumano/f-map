@@ -14,28 +14,27 @@ function getInfo(actions, func) {
     req.send(null);
 }
 
-function changeMap(mid) {
-    mapid = mid;
-    var actions = '[{"name":"action","value":"GetMap"},{"name":"map_id","value":' + mapid + '}]';
-    getInfo(actions, function (response) {
-        var jSon;
-        var myObject = "jSon=" + response;
-        eval(myObject);
-        //lay bound de tao options
-        bounds = new OpenLayers.Bounds(
+function changeMap(response) {
+    if (mapid != 1) {
+        alert('Run');
+        return;
+    }
+    var jSon;
+    var myObject = "jSon=" + response;
+    eval(myObject);
+    //lay bound de tao options
+    bounds = new OpenLayers.Bounds(
                     jSon.bound.MinX, jSon.bound.MinY, jSon.bound.MaxX, jSon.bound.MaxY
                 );
-        alert(map.getNumLayers()+ response);
+    map.maxExtent = bounds;
 
-        map.maxExtent = bounds;
-
-        var layerNames = '', styleNames = '';
-        for (var i = 0; i < jSon.layers.length; i++) {
-            if (i != 0) { layerNames += ','; styleNames += ','; };
-            layerNames += jSon.layers[i].Layer;
-            styleNames += jSon.layers[i].StyleName;
-        }
-        var newlayers = new OpenLayers.Layer.WMS(
+    var layerNames = '', styleNames = '';
+    for (var i = 0; i < jSon.layers.length; i++) {
+        if (i != 0) { layerNames += ','; styleNames += ','; };
+        layerNames += jSon.layers[i].Layer;
+        styleNames += jSon.layers[i].StyleName;
+    }
+    var newlayers = new OpenLayers.Layer.WMS(
                     "Geoserver layers", "http://localhost:8080/geoserver/wms",
                     {
                         LAYERS: layerNames,
@@ -51,15 +50,50 @@ function changeMap(mid) {
                     }
            );
 
-        var baseLayer = map.baseLayer;
-        baseLayer.destroy();
-        map.addLayer(newlayers);
-        map.setBaseLayer(newlayers);
-        alert(map.getNumLayers());
+    var baseLayer = map.baseLayer;
+    baseLayer.destroy();
+    map.addLayer(newlayers);
+    map.setBaseLayer(newlayers);
+    //alert(map.getNumLayers());
 
-        map.zoomToExtent(bounds);
+    map.zoomToExtent(bounds);
+
+    //////////////////////////////////////////////////////////////////
+    //update combo-ward
+    var comboWard = Ext.getCmp('combo-ward');
+    comboWard.clearValue();
+
+    if (mapid == 0) {//toan thanh
+        // alert("AAA");
+        comboWard.hide();
+
     }
-    );
+    else {
+        comboWard.show();
+        if (mapid != 1) {
+            comboWard.store = null;
+            alert("Chưa có dữ liệu");
+            return;
+        }
+
+        var actions = '[{"name":"action","value":"GetWards"},{"name":"district_id","value":' + mapid + '}]';
+        getInfo(actions,
+                            function (reponsewards) {
+                                comboWard.store = new Ext.data.ArrayStore({
+                                    fields: ['id', 'ward'],
+                                    data: str2Arr(reponsewards)
+                                });
+                            }
+                        );
+
+        //comboCity.store.filter('cid', combo.getValue());
+    }
+}
+
+function changeMapRequest(mid) {
+    mapid = mid;
+    var actions = '[{"name":"action","value":"GetMap"},{"name":"map_id","value":' + mapid + '}]';
+    getInfo(actions, changeMap );
 }
 
 

@@ -38,39 +38,8 @@ Ext.onReady(function () {
                 fn: function (combo, value) {
                     //get map
                     //?action=GetMap&map_id=1
-                    changeMap(combo.getValue());
-
-                    //update combo-ward
-                    var comboWard = Ext.getCmp('combo-ward');
-                    comboWard.clearValue();
-
-                    if (combo.getValue() == '0') {
-                        // alert("AAA");
-                        var comboWard = Ext.getCmp('combo-ward');
-                        comboWard.hide();
-
-                    }
-                    else {
-                        comboWard.show();
-                        if (combo.getValue() != 1) {
-                            comboWard.store = null;
-                            alert("Chưa có dữ liệu");
-                            return;
-                        }
-
-                        var actions = '[{"name":"action","value":"GetWards"},{"name":"district_id","value":' + combo.getValue() + '}]';
-                        getInfo(actions,
-                            function (reponsewards) {
-                                comboWard.store = new Ext.data.ArrayStore({
-                                    fields: ['id', 'ward'],
-                                    data: str2Arr(reponsewards)
-                                });
-                            }
-                        );
-
-                        //comboCity.store.filter('cid', combo.getValue());
-                    }
-
+                    changeMapRequest(combo.getValue());
+                                    
                 }
             }
             }
