@@ -52,7 +52,13 @@ Ext.onReady(function () {
                     });
 
     var viewport = new Ext.Viewport({
-        layout: 'border',
+        layout: {
+            type: 'border',
+            padding: 5
+        },
+        defaults: {
+            split: true
+        },
         items: [
         // create instance immediately
             /*
@@ -131,7 +137,7 @@ Ext.onReady(function () {
                 region: 'center', // a center region is ALWAYS required for border layout
                 // deferredRender: false,
                 items: [{
-                    contentEl: 'center1',
+                    contentEl: 'center',
                 }]
             })
         ]

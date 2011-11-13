@@ -1,21 +1,5 @@
 ﻿var serverURL = 'Server.aspx';
 
-function getMap(actions) {
-    var url = serverURL + para2Str(actions);
-    req = getAjax();
-
-    req.onreadystatechange = function () {
-
-        if (req.readyState == 4 && req.status == 200) {
-            alert(req.responseText);
-        }
-
-    }
-
-    req.open('GET', url, true);
-    req.send(null);
-}
-
 function getInfo(actions, func) {
     var url = serverURL + para2Str(actions);
     req = getAjax();
@@ -29,6 +13,55 @@ function getInfo(actions, func) {
     req.open('GET', url, true);
     req.send(null);
 }
+
+function changeMap(mid) {
+    mapid = mid;
+    var actions = '[{"name":"action","value":"GetMap"},{"name":"map_id","value":' + mapid + '}]';
+    getInfo(actions, function (response) {
+        var jSon;
+        var myObject = "jSon=" + response;
+        eval(myObject);
+        //lay bound de tao options
+        bounds = new OpenLayers.Bounds(
+                    jSon.bound.MinX, jSon.bound.MinY, jSon.bound.MaxX, jSon.bound.MaxY
+                );
+        alert(map.getNumLayers()+ response);
+
+        map.maxExtent = bounds;
+
+        var layerNames = '', styleNames = '';
+        for (var i = 0; i < jSon.layers.length; i++) {
+            if (i != 0) { layerNames += ','; styleNames += ','; };
+            layerNames += jSon.layers[i].Layer;
+            styleNames += jSon.layers[i].StyleName;
+        }
+        var newlayers = new OpenLayers.Layer.WMS(
+                    "Geoserver layers", "http://localhost:8080/geoserver/wms",
+                    {
+                        LAYERS: layerNames,
+                        STYLES: styleNames,
+                        format: format,
+                        tiled: true,
+                        tilesOrigin: map.maxExtent.left + ',' + map.maxExtent.bottom
+                    },
+                    {
+                        buffer: 0,
+                        displayOutsideMaxExtent: true,
+                        isBaseLayer: true
+                    }
+           );
+
+        var baseLayer = map.baseLayer;
+        baseLayer.destroy();
+        map.addLayer(newlayers);
+        map.setBaseLayer(newlayers);
+        alert(map.getNumLayers());
+
+        map.zoomToExtent(bounds);
+    }
+    );
+}
+
 
 function query(actions) {  
     var url =  serverURL + para2Str(actions);//?action=TenDuong&u=' + item;
