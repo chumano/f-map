@@ -111,60 +111,19 @@
                     buttonObject,
                     comboDistricts
                 ]
-            })
-            ,
-            /*
-            {
-                region: 'east',
-                title: 'Phường',
-                collapsible: true,
-                split: true,
-                width: 225, // give east and west regions a width
-                minSize: 175,
-                maxSize: 400,
-                // margins: '0 5 0 0',
-                layout: 'fit', // specify layout manager for items
-                items:            // this TabPanel is wrapped by another Panel so the title will be applied
-                new Ext.TabPanel({
-                    border: false, // already wrapped so don't add another border
-                    activeTab: 1, // second tab initially active
-                    tabPosition: 'bottom',
-                    items: [{
-                        html: '<p>A TabPanel component can be a region.</p>',
-                        title: 'A Tab',
-                        autoScroll: true
-                    }, new Ext.grid.PropertyGrid({
-                        title: 'Property Grid',
-                        closable: true,
-                        source: {
-                            "(name)": "Properties Grid",
-                            "grouping": false,
-                            "autoFitColumns": true,
-                            "productionQuality": false,
-                            "created": new Date(Date.parse('10/15/2006')),
-                            "tested": false,
-                            "version": 0.01,
-                            "borderWidth": 1
-                        }
-                    })]
-                })
-            }, 
-            */
+            }),
             {
                 region: 'west',
                 id: 'west-panel', // see Ext.getCmp() below
                 // title: 'Kết quả tìm kiếm',
                 split: true,
                 width: 300,
-                minSize: 300,
-                maxSize: 400,
+                boxMinWidth: 300,
+                boxMaxWidth: 300,
                 // collapsible: true,
                 // margins: '0 0 0 5',
                 items: tabPanel
             },
-        // in this instance the TabPanel is not wrapped by another panel
-        // since no title is needed, this Panel is added directly
-            // as a Container
             new Ext.Panel({
                 region: 'center', // a center region is ALWAYS required for border layout
                 // deferredRender: false,
