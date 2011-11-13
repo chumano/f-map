@@ -205,13 +205,13 @@ function searchAddress() {
 
             polygonCenterList += lng + ", " + lat + "<br />";
 
-            // points.push(new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(lng, lat), null, null));
+            points.push(new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(lng, lat), null, null));
 
             // addPoint(lng, lat);
             searchResults = searchResults + "<b>Số nhà </b>" + parsedJSON[i].SoNha + ", <b>Tên đường </b>" + parsedJSON[i].TenDuong + "<br/>"
         }
 
-        // addPoints(points);
+        addPoints(points);
         tabPanel.setActiveTab(0);
         tabSearchAddress.update(searchResults);
 
@@ -219,4 +219,8 @@ function searchAddress() {
 
         // document.getElementById("test").innerHTML = polygonCenterList;
     });
+}
+
+function addPoints(points) {
+    vectorLayer.addFeatures(points);
 }
