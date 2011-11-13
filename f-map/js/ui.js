@@ -196,7 +196,9 @@ function searchAddress() {
         var polygonCenterList = "";
         var searchResults = "";
         var points = [];
-        for (i = 0; i < parsedJSON.length; ++i) {
+        popups = [];
+        markers = [];
+        for (i = 0; i < parsedJSON.length && i < 10; ++i) {
             lng = parsedJSON[i].X - 0.74630393;
             lat = parsedJSON[i].Y - (-0.00523917);
 
@@ -207,11 +209,39 @@ function searchAddress() {
 
             points.push(new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(lng, lat), null, null));
 
+            // TODO test marker
+            
+
+            /*
+            popup = new OpenLayers.Popup.Anchored("Example",
+                                         new OpenLayers.LonLat(lng, lat),
+                                         new OpenLayers.Size(200, 50),
+                                         "Welcome to F-Map");
+                                         */
+            popup = new OpenLayers.Popup.FramedCloud("featurePopup",
+                                     new OpenLayers.LonLat(lng, lat),
+                                     new OpenLayers.Size(100,100),
+                                     "<h2>"+"The title" + "</h2>" +
+                                     "description",
+                                     null, true, null);
+
+            popup.hide();
+            map.addPopup(popup);
+
+            popups.push(popup);
+
+            var point  = new OpenLayers.LonLat(lng, lat)
+            var marker = new OpenLayers.Marker(point);
+            
+
+            addMarker(marker, lng, lat);
+            // END TEST
+
             // addPoint(lng, lat);
             searchResults = searchResults + "<b>Số nhà </b>" + parsedJSON[i].SoNha + ", <b>Tên đường </b>" + parsedJSON[i].TenDuong + "<br/>"
         }
 
-        addPoints(points);
+        // addPoints(points);
         tabPanel.setActiveTab(0);
         tabSearchAddress.update(searchResults);
 
@@ -223,4 +253,32 @@ function searchAddress() {
 
 function addPoints(points) {
     vectorLayer.addFeatures(points);
+}
+
+function addMarker(marker, lng, lat) {
+    marker.events.register("click", marker, function (evt) {
+                if (currentPopup != null) {
+                    currentPopup.hide();
+                }
+
+                if (this.popup == null) {
+                    // this.popup = this.createPopup(this.closeBox);
+
+                    this.popup = new OpenLayers.Popup.FramedCloud("featurePopup",
+                                     new OpenLayers.LonLat(lng, lat),
+                                     new OpenLayers.Size(100,100),
+                                     "<h2>"+"The title" + "</h2>" +
+                                     "description",
+                                     null, true, null);
+
+                    map.addPopup(this.popup);
+                    this.popup.show();
+                } else {
+                    this.popup.toggle();
+                }
+                currentPopup = this.popup;
+                OpenLayers.Event.stop(evt);
+            });
+
+    markersLayer.addMarker(marker);
 }

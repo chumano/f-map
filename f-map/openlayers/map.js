@@ -61,7 +61,9 @@ function init() {
                     }
            );
 
-            map.addLayers([layers, vectorLayer]);
+           markersLayer = new OpenLayers.Layer.Markers("Markers");
+
+           map.addLayers([layers, vectorLayer, markersLayer]);
 
             //add Control   
             map.addControl(new OpenLayers.Control.DrawFeature(vectorLayer, OpenLayers.Handler.Point));
