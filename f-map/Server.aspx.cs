@@ -85,7 +85,7 @@ public partial class Server : System.Web.UI.Page
 
         featureInfoItems[0] = new FeatureInfoItemModel();
         featureInfoItems[0].name = "Mã hành chính";
-        featureInfoItems[0].value = ParseFeatureInfoItem(array[4]);
+        featureInfoItems[0].value = ParseFeatureInfoItem(array[4].Replace("E7", "").Replace(".", ""));
 
         featureInfoItems[1] = new FeatureInfoItemModel();
         featureInfoItems[1].name = "Tên";
