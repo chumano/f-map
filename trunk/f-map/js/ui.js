@@ -10,6 +10,7 @@
         layout: 'border',
         items: [
         // create instance immediately
+            /*
             new Ext.BoxComponent({
                 region: 'north',
                 height: 32, // give north and south regions a height
@@ -17,26 +18,47 @@
                     tag: 'div',
                     html: '<p>north - generally for menus, toolbars and/or advertisements</p>'
                 }
-            }), {
-                // lazily created panel (xtype:'panel' is default)
-                region: 'south',
-                contentEl: 'south',
-                split: true,
-                height: 100,
-                minSize: 100,
-                maxSize: 200,
-                collapsible: true,
-                title: 'South',
-                margins: '0 0 0 0'
-            }, {
+            }), 
+            */
+            new Ext.Panel({
+                region: 'north', // a center region is ALWAYS required for border layout
+                layout: 'hbox',
+                height: 42,
+                items: [
+                    new Ext.form.TextField({ 
+                        width: 600, 
+                        height: 32, 
+                        margins: {
+                            top: 5,
+                            right: 5,
+                            bottom: 10,
+                            left: 305
+                        },
+                    }),
+                    new Ext.Button({ 
+                        text: 'Search', 
+                        height: 32, 
+                        margins: {
+                            top: 5,
+                            right: 5,
+                            bottom: 10,
+                            left: 5
+                        } 
+                        /*, handler: searchAddress*/ 
+                   })
+                ]
+            })
+            ,
+            /*
+            {
                 region: 'east',
-                title: 'East Side',
+                title: 'Phường',
                 collapsible: true,
                 split: true,
                 width: 225, // give east and west regions a width
                 minSize: 175,
                 maxSize: 400,
-                margins: '0 5 0 0',
+                // margins: '0 5 0 0',
                 layout: 'fit', // specify layout manager for items
                 items:            // this TabPanel is wrapped by another Panel so the title will be applied
                 new Ext.TabPanel({
@@ -62,54 +84,52 @@
                         }
                     })]
                 })
-            }, {
+            }, 
+            */
+            {
                 region: 'west',
                 id: 'west-panel', // see Ext.getCmp() below
-                title: 'West',
+                // title: 'Kết quả tìm kiếm',
                 split: true,
-                width: 200,
-                minSize: 175,
+                width: 300,
+                minSize: 300,
                 maxSize: 400,
-                collapsible: true,
-                margins: '0 0 0 5',
-                layout: {
-                    type: 'accordion',
-                    animate: true
-                },
-                items: [{
-                    contentEl: 'west',
-                    title: 'Navigation',
-                    border: false,
-                    iconCls: 'nav' // see the HEAD section for style used
-                }, {
-                    title: 'Settings',
-                    html: '<p>Some settings in here.</p>',
-                    border: false,
-                    iconCls: 'settings'
-                }]
+                // collapsible: true,
+                // margins: '0 0 0 5',
+                items: 
+                    new Ext.TabPanel({
+                        border: false, // already wrapped so don't add another border
+                        activeTab: 0, // second tab initially active
+                        // tabPosition: 'bottom',
+                        items: [
+                            {
+                                html: '<p>Kết quả tìm kiếm</p>',
+                                title: 'Tìm địa chỉ',
+                                autoScroll: true
+                            }, 
+                            {
+                                html: '<p>xxx</p>',
+                                title: 'Thông tin',
+                                autoScroll: true
+                            }
+                        ]
+                    })
             },
         // in this instance the TabPanel is not wrapped by another panel
         // since no title is needed, this Panel is added directly
-        // as a Container
-            new Ext.TabPanel({
+            // as a Container
+            new Ext.Panel({
                 region: 'center', // a center region is ALWAYS required for border layout
-                deferredRender: false,
-                activeTab: 0,     // first tab initially active
+                // deferredRender: false,
                 items: [{
                     contentEl: 'center1',
-                    title: 'Close Me',
-                    closable: true,
-                    autoScroll: true
-                }, {
-                    contentEl: 'center2',
-                    title: 'Center Panel',
-                    autoScroll: true
                 }]
-            })]
+            })
+        ]
     });
     // get a reference to the HTML element with id "hideit" and add a click listener to it 
     Ext.get("hideit").on('click', function () {
-        // get a reference to the Panel that was created with id = 'west-panel' 
+        // get a reference to the Panel that was created wit0h id = 'west-panel' 
         var w = Ext.getCmp('west-panel');
         // expand or collapse that Panel based on its collapsed property state
         w.collapsed ? w.expand() : w.collapse();
