@@ -25,12 +25,17 @@
                 fn: function (combo, value) {
                     //get map
                     //?action=GetMap&map_id=1
+
+                    // moveTo(105.95344, 10.78479, 3);
+
                     changeMapRequest(combo.getValue());
-                                    
+                    
                 }
             }
             }
      });
+     
+     comboDistricts.setValue(0);
 
     buttonObject = new Ext.Button({ 
                         text: 'Tìm kiếm', 
@@ -98,6 +103,9 @@
                 region: 'north', // a center region is ALWAYS required for border layout
                 layout: 'hbox',
                 height: 42,
+                boxMaxHeight: 42,
+                boxMinHeight: 42,
+                bodyStyle: "background-color:#133783 !important",
                 items: [
                     textField,
                     buttonObject,
@@ -242,7 +250,10 @@ function searchAddress() {
             // END TEST
 
             // addPoint(lng, lat);
-            searchResults = searchResults + "<b>Số nhà </b>" + parsedJSON[i].SoNha + ", <b>Tên đường </b>" + parsedJSON[i].TenDuong + "<br/>"
+            searchResults = searchResults 
+                + '<span style="cursor:pointer;" onclick="moveTo(' + lng + ',' + lat + ');"><i>' 
+                + "<b>Số nhà </b>" + parsedJSON[i].SoNha + ", <b>Tên đường </b>" + parsedJSON[i].TenDuong + "<br/>"
+                + '</i></span>';
         }
 
         // addPoints(points);
@@ -280,8 +291,19 @@ function addMarker(marker, lng, lat, sonha, tenduong) {
                     this.popup.toggle();
                 }
                 currentPopup = this.popup;
+
+                // moveTo(lng, lat);
+
                 OpenLayers.Event.stop(evt);
             });
 
     markersLayer.addMarker(marker);
+}
+
+function moveTo(lng, lat) {
+    map.setCenter(new OpenLayers.LonLat(lng, lat), defaultCenterZoom);
+}
+
+function moveTo(lng, lat, zoom) {
+    map.setCenter(new OpenLayers.LonLat(lng, lat), zoom);
 }
