@@ -19,7 +19,7 @@ function init() {
         units: 'degrees'
     };
     //Default map is Quan 1 : mapid=1
-    mapid = 1;
+    mapid = 0;
     //?action=GetMap&map_id=1
     var actions = '[{"name":"action","value":"GetMap"},{"name":"map_id","value":' + mapid + '}]';
     getInfo(actions,

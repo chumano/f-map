@@ -147,6 +147,8 @@ function changeMap(response) {
             tabInfo.update(str);
         }
     );
+
+        
 }
 
 function changeMapRequest(mid) {

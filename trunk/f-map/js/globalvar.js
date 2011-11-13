@@ -20,3 +20,5 @@ var mask;
 
 var markersLayer;
 var currentPopup;
+
+var defaultCenterZoom = 5;
