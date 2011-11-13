@@ -189,6 +189,14 @@ function searchAddress() {
     var actions = '[{"name":"action","value":"SearchAddress"},'
                     + '{"name":"keyword","value":' + keyword + '}]';
     getInfo(actions, function (response) {
+        markersLayer.destroy();
+        markersLayer = new OpenLayers.Layer.Markers("Markers");
+        map.addLayers([markersLayer]);
+
+        if (currentPopup != null) {
+            currentPopup.hide();
+        }
+
         // TODO parse address response
         var diffLng = 0;
         var diffLat = 0;
@@ -196,7 +204,6 @@ function searchAddress() {
         var polygonCenterList = "";
         var searchResults = "";
         var points = [];
-        popups = [];
         markers = [];
         for (i = 0; i < parsedJSON.length && i < 10; ++i) {
             lng = parsedJSON[i].X - 0.74630393;
@@ -228,13 +235,10 @@ function searchAddress() {
             popup.hide();
             map.addPopup(popup);
 
-            popups.push(popup);
-
             var point  = new OpenLayers.LonLat(lng, lat)
             var marker = new OpenLayers.Marker(point);
-            
 
-            addMarker(marker, lng, lat);
+            addMarker(marker, lng, lat, parsedJSON[i].SoNha, parsedJSON[i].TenDuong);
             // END TEST
 
             // addPoint(lng, lat);
@@ -255,7 +259,7 @@ function addPoints(points) {
     vectorLayer.addFeatures(points);
 }
 
-function addMarker(marker, lng, lat) {
+function addMarker(marker, lng, lat, sonha, tenduong) {
     marker.events.register("click", marker, function (evt) {
                 if (currentPopup != null) {
                     currentPopup.hide();
@@ -264,11 +268,10 @@ function addMarker(marker, lng, lat) {
                 if (this.popup == null) {
                     // this.popup = this.createPopup(this.closeBox);
 
-                    this.popup = new OpenLayers.Popup.FramedCloud("featurePopup",
+                    this.popup = new OpenLayers.Popup.FramedCloud("address",
                                      new OpenLayers.LonLat(lng, lat),
                                      new OpenLayers.Size(100,100),
-                                     "<h2>"+"The title" + "</h2>" +
-                                     "description",
+                                     "<h2>"+ sonha + "</h2>" + tenduong,
                                      null, true, null);
 
                     map.addPopup(this.popup);
