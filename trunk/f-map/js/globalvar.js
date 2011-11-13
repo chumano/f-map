@@ -17,3 +17,8 @@ var vectorLayer;
 var mapid;
 var format = 'image/png';
 var mask;
+
+var popups;
+// var markers;
+var markersLayer;
+var currentPopup;
