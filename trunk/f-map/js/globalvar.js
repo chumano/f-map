@@ -6,3 +6,4 @@ var labelInfo;
 var searchWin;
 var textField;
 var vectorLayer;
+var mask;
