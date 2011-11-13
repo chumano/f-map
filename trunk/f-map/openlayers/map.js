@@ -96,7 +96,7 @@ function init() {
                                     + ',{"name":"width","value":' + w + '}'
                                     + ',{"name":"height","value":' + h + '}'
                                     + ']';
-                getInfo(actions, showInfo);
+                getInfo2(actions, showInfo);
 
             });
 

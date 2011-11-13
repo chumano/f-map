@@ -18,6 +18,42 @@ function getInfo(actions, func) {
     req.send(null);
 }
 
+function getInfo2(actions, func) {
+    var url = serverURL + para2Str(actions);
+    req = getAjax();
+
+    req.onreadystatechange = function () {
+        if (req.readyState == 4 && req.status == 200) {
+            func(req.responseText);
+        }
+
+    }
+    req.open('GET', url, true);
+    req.send(null);
+}
+
+function showInfo(reponsewards) {
+    //[{"name":"Mã hành chính","value":"7.6026755E7"},{"name":"Tên","value":"Phường Cô Giang"},{"name":"Số hộ","value":"4185"}]
+    //alert(reponsewards);
+    var jSon;
+    var myObject = "jSon=" + reponsewards;
+    eval(myObject);
+
+    var str = '';
+    for (var i = 0; i < jSon.length; i++) {
+        if (i != 0) str += '<br/>';
+        str += jSon[i].name + ' : '
+                    + '<b>' + jSon[i].value + '</b>';
+
+    }
+
+    tabPanel.setActiveTab(1);
+    tabInfo.update(str);
+    //infoWin.body.update(str);
+    // infoWin.doLayout();
+    //infoWin.show();
+}
+
 function updateInfo() {
     var comboWard = Ext.getCmp('combo-ward');
     comboWard.clearValue();
