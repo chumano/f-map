@@ -12,22 +12,24 @@
         <link rel="stylesheet" type="text/css" href="css/ext-all.css" />
 
 <!-- ** Javascript ** -->
-        <script type="text/javascript" src="js/flib.js"></script>
-        <script type="text/javascript" src="js/globalvar.js"></script>
         <!---------- ExtJS library: base/adapter ----------->
         <script type="text/javascript" src="js/ext-base.js"></script>
         <script type="text/javascript" src="js/ext-all-debug.js"></script>
-        
+        <%-----------OpenLayers--------------%>
+        <script type='text/javascript' src='openlayers/OpenLayers.js'></script>
+
+
+        <script type="text/javascript" src="js/flib.js"></script>
+        <script type="text/javascript" src="js/globalvar.js"></script>
+             
         <!-- connect -->
          <script type="text/javascript" src="js/connect.js"></script>
 
         <!--window-->
-        <%--<script type="text/javascript" src="js/lcombobox.js"></script>--%>
          <script type="text/javascript" src="openlayers/mapinfo.js"></script>
          <script type="text/javascript" src="js/interface.js"></script>
         
-        <%-----------OpenLayers--------------%>
-        <script type='text/javascript' src='openlayers/OpenLayers.js'></script>
+        
         <script type='text/javascript' src='openlayers/map.js'></script>
     </head>
 

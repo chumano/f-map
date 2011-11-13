@@ -37,7 +37,8 @@ Ext.onReady(function () {
             listeners: { select: {
                 fn: function (combo, value) {
                     //get map
-
+                    //?action=GetMap&map_id=1
+                    changeMap(combo.getValue());
 
                     //update combo-ward
                     var comboWard = Ext.getCmp('combo-ward');
@@ -69,7 +70,7 @@ Ext.onReady(function () {
 
                         //comboCity.store.filter('cid', combo.getValue());
                     }
-                    
+
                 }
             }
             }
@@ -164,7 +165,7 @@ Ext.onReady(function () {
         header: false,
         resizable: false,
 
-        x: window.innerWidth-200,
+        x: window.innerWidth - 200,
         y: 200
     });
 
@@ -181,7 +182,7 @@ Ext.onReady(function () {
         layout: 'hbox',
         labelWidth: 50,
         defaultType: 'field',
-        items: [textField,buttonObject],
+        items: [textField, buttonObject],
         x: 100,
         y: 50
     });
