@@ -4,6 +4,8 @@ OpenLayers.IMAGE_RELOAD_ATTEMPTS = 5;
 OpenLayers.DOTS_PER_INCH = 25.4 / 0.28;
 
 function init() {
+    
+
     var bounds = new OpenLayers.Bounds(
                     105.93, 10.758,
                     105.961, 10.801
@@ -38,17 +40,16 @@ function init() {
             // layer for points
             vectorLayer = new OpenLayers.Layer.Vector("Point Layer");
             var layerNames = '', styleNames = '';
-            for(var i =0 ; i < jSon.layers.length ; i++)
-            {
-                if(i!=0) {layerNames+=',';styleNames+=',';};
-                layerNames+=jSon.layers[i].Layer;
-                styleNames+=jSon.layers[i].StyleName;
+            for (var i = 0; i < jSon.layers.length; i++) {
+                if (i != 0) { layerNames += ','; styleNames += ','; };
+                layerNames += jSon.layers[i].Layer;
+                styleNames += jSon.layers[i].StyleName;
             }
             var layers = new OpenLayers.Layer.WMS(
                     "Geoserver layers", "http://localhost:8080/geoserver/wms",
                     {
-                        LAYERS: layerNames,//'sde:QUAN1_RG_HCXA',
-                        STYLES: styleNames,//'Quan1_Style',
+                        LAYERS: layerNames, //'sde:QUAN1_RG_HCXA',
+                        STYLES: styleNames, //'Quan1_Style',
                         format: format,
                         tiled: true,
                         tilesOrigin: map.maxExtent.left + ',' + map.maxExtent.bottom
@@ -98,6 +99,8 @@ function init() {
                 getInfo(actions, showInfo);
 
             });
+
+           
         }
     );
     

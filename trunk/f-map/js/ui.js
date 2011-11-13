@@ -1,17 +1,39 @@
-﻿var tabPanel;
-var tabSearchAddress;
-var tabInfo;
-
-Ext.onReady(function () {
-
-    // NOTE: This is an example showing simple state management. During development,
-    // it is generally best to disable state management as dynamically-generated ids
-    // can change across page loads, leading to unpredictable results.  The developer
-    // should ensure that stable state ids are set for stateful components in real apps.
+﻿Ext.onReady(function () {
     Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
+    var comboDistricts = new Ext.form.ComboBox({
+            height:5,
+            typeAhead: true,
+            triggerAction: 'all',
+            lazyRender: true,
+            mode: 'local',
+            id: 'combo-district',
+            valueNotFoundText: 'Unknown',
+            margins: {
+                top: 10,
+                right: 0,
+                bottom: 10,
+                left: 10
+            },
+            store: new Ext.data.ArrayStore({
+                fields: ['cid', 'district'],
+                data: districts
+            }),
+            valueField: 'cid',
+            displayField: 'district',
+            listeners: { select: {
+                fn: function (combo, value) {
+                    //get map
+                    //?action=GetMap&map_id=1
+                    changeMapRequest(combo.getValue());
+                                    
+                }
+            }
+            }
+     });
+
     buttonObject = new Ext.Button({ 
-                        text: 'Search', 
+                        text: 'Tìm kiếm', 
                         height: 32, 
                         margins: {
                             top: 5,
@@ -60,6 +82,7 @@ Ext.onReady(function () {
             split: true
         },
         items: [
+
         // create instance immediately
             /*
             new Ext.BoxComponent({
@@ -77,7 +100,8 @@ Ext.onReady(function () {
                 height: 42,
                 items: [
                     textField,
-                    buttonObject
+                    buttonObject,
+                    comboDistricts
                 ]
             })
             ,
@@ -159,8 +183,8 @@ function searchAddress() {
 
     keyword = change2Str(textField.getValue());
 
-    mask = new Ext.LoadMask(Ext.getBody(), { msg: "Đang tìm kiếm..." });
-    mask.show();
+    //mask = new Ext.LoadMask(Ext.getBody(), { msg: "Đang tìm kiếm..." });
+    //mask.show();
 
     var actions = '[{"name":"action","value":"SearchAddress"},'
                     + '{"name":"keyword","value":' + keyword + '}]';
@@ -188,9 +212,10 @@ function searchAddress() {
         }
 
         // addPoints(points);
+        tabPanel.setActiveTab(0);
         tabSearchAddress.update(searchResults);
 
-        mask.hide();
+        //mask.hide();
 
         // document.getElementById("test").innerHTML = polygonCenterList;
     });
