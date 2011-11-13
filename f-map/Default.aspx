@@ -11,6 +11,7 @@
 
 <!-- ** Javascript ** -->
         <script type="text/javascript" src="js/flib.js"></script>
+        <script type="text/javascript" src="js/connect.js"></script>
         <script type="text/javascript" src="js/globalvar.js"></script>
         <!---------- ExtJS library: base/adapter ----------->
         <script type="text/javascript" src="js/ext-base.js"></script>

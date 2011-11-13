@@ -171,11 +171,11 @@ public partial class Server : System.Web.UI.Page
         string query = null;
         if (keys.Length == 2)
         {
-            query = String.Format("select distinct SoNha, TenConDuong, X, Y from QUAN1 where SoNha like '%{0}%' and TenConDuong2 like '%{1}%'", keys[0], keys[1]);
+            query = String.Format("select distinct SoNha, TenConDuong, X, Y from QUAN1 where SoNha like '{0}' and TenConDuong2 like '{1}'", keys[0].Trim(), keys[1].Trim());
         }
         else
         {
-            query = String.Format("select distinct SoNha, TenConDuong, X, Y from QUAN1 where SoNha like '%{0}%' or TenConDuong2 like '%{1}%'", keyword, keyword);
+            query = String.Format("select distinct SoNha, TenConDuong, X, Y from QUAN1 where SoNha like '%{0}%' or TenConDuong2 like '%{1}%'", keyword.Trim(), keyword.Trim());
         }
         DataTable dt = Helper.GetDataTable2(query);
         int len = dt.Rows.Count;
