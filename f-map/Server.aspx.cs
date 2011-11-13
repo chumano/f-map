@@ -250,30 +250,37 @@ public partial class Server : System.Web.UI.Page
 
     private string checkAddress(string NoAdd, string StrAdd, string Ward)
     {
-        string sqlStr = "Select B.BangNha, A.MaDuong from NHA_HUYEN A, HUYEN B, CONDUONG C WHERE A.MaDuong = C.IDConDuong AND A.MaQuan=B.IDHuyen AND C.TenKhongDau = N'" + StrAdd + "' AND A.MaPhuong=N'" + Ward + "'";
+        string sqlStr = "Select B.Tbl_Name, A.IDStreet"
+                    +" From StreetInfo A, District B, Streets C"
+                    + " WHERE A.IDStreet=C.IDStreet"
+                        + " AND A.IDDistrict=B.IDDistrict "
+                        + " AND C.NoName = N'" + StrAdd 
+                        + "' AND A.IDWard=N'" + Ward + "'";
         DataTable tbl = Helper.GetDataTable(sqlStr);
 
-        string _oid = "1", _BangNha = "NHA_Q1";
+        string _oid = "1", tblName = "NHA_Q1";
         DataTable tbl2 = null;
         for (int i = 0; i < tbl.Rows.Count; i++)
         {
-            _BangNha = tbl.Rows[i][0].ToString();
+            tblName = tbl.Rows[i][0].ToString();
             string _MaDuong = tbl.Rows[i][1].ToString();
-            tbl2 = Helper.GetDataTable("Select X, Y, SoNha From " + _BangNha + " WHERE MaPhuong=N'" + Ward + "' AND IDConDuong='" + _MaDuong + "' AND SoNha='" + NoAdd + "'");
+            tbl2 = Helper.GetDataTable2("Select X, Y, SoNha From " + tblName + " WHERE MaPhuong=N'" + Ward + "' AND IDConDuong='" + _MaDuong + "' AND SoNha='" + NoAdd + "'");
             if (tbl2.Rows.Count > 0)
             {
+                //tim thay co
                 return tbl2.Rows[0]["X"].ToString() + "," + tbl2.Rows[0]["Y"].ToString();
             }
         }
+
         //không có địa chỉ giống thì tìm gần giống        
         for (int i = 0; i < tbl.Rows.Count; i++)
         {
-            _BangNha = tbl.Rows[i][0].ToString();
+            tblName = tbl.Rows[i][0].ToString();
             string _MaDuong = tbl.Rows[i][1].ToString();
             string _SoNha = "";
 
             int min = 50000;
-            tbl2 = Helper.GetDataTable("Select oid, SoNha, X, Y From " + _BangNha + " WHERE MaPhuong=N'" + Ward + "' AND IDConDuong='" + _MaDuong + "'");
+            tbl2 = Helper.GetDataTable2("Select oid, SoNha, X, Y From " + tblName + " WHERE MaPhuong=N'" + Ward + "' AND IDConDuong='" + _MaDuong + "'");
             for (int j = 0; j < tbl2.Rows.Count; j++)
             {
                 _SoNha = tbl2.Rows[j]["SoNha"].ToString();
@@ -285,8 +292,9 @@ public partial class Server : System.Web.UI.Page
                     {
                         //ko tìm ra địa chỉ đúng thì tìm ngoài đầu hẻm
                         _oid = tbl2.Rows[j]["oid"].ToString();
-                        tbl2 = Helper.GetDataTable("Select X, Y From " + _BangNha + " WHERE oid='" + _oid + "'");
+                        tbl2 = Helper.GetDataTable2("Select X, Y From " + tblName + " WHERE oid='" + _oid + "'");
                         if (tbl2.Rows.Count > 0)
+                            //tim thay co
                             return tbl2.Rows[0]["X"].ToString() + "," + tbl2.Rows[0]["Y"].ToString();
                     }
                     else if (!OddOrEven(Math.Abs(_SoNhaInt - _NoAddInt)) && (min > Math.Abs(_SoNhaInt - _NoAddInt)))
@@ -299,9 +307,10 @@ public partial class Server : System.Web.UI.Page
             }
         }
         ////tìm địa chỉ gần địa chỉ cần tìm nhất
-        tbl2 = Helper.GetDataTable("Select X, Y, SoNha From " + _BangNha + " WHERE  oid='" + _oid + "'");
+        tbl2 = Helper.GetDataTable2("Select X, Y, SoNha From " + tblName + " WHERE  oid='" + _oid + "'");
         if (tbl2.Rows.Count > 0)
         {
+            //tim thay co
             return tbl2.Rows[0]["X"].ToString() + "," + tbl2.Rows[0]["Y"].ToString();
         }
         else
