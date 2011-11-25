@@ -4,7 +4,7 @@ OpenLayers.IMAGE_RELOAD_ATTEMPTS = 5;
 OpenLayers.DOTS_PER_INCH = 25.4 / 0.28;
 
 function init() {
-    
+
 
     var bounds = new OpenLayers.Bounds(
                     105.93, 10.758,
@@ -37,43 +37,89 @@ function init() {
             //tao map
             map = new OpenLayers.Map('map', options);
 
-            // layer for points
-            vectorLayer = new OpenLayers.Layer.Vector("Point Layer");
+            //---------------------Build up cac layers--------------------------------
+            // basic layers 
             var layerNames = '', styleNames = '';
             for (var i = 0; i < jSon.layers.length; i++) {
                 if (i != 0) { layerNames += ','; styleNames += ','; };
                 layerNames += jSon.layers[i].Layer;
                 styleNames += jSon.layers[i].StyleName;
             }
-            var layers = new OpenLayers.Layer.WMS(
-                    "Geoserver layers", "http://localhost:8080/geoserver/wms",
+
+            layers = new OpenLayers.Layer.WMS(
+                    "Geoserver layers", hostURL,
                     {
-                        LAYERS: layerNames, //'sde:QUAN1_RG_HCXA',
+                        LAYERS: layerNames, //'sde:QUAN1_RG',
                         STYLES: styleNames, //'Quan1_Style',
                         format: format,
                         tiled: true,
+                        transparent: true,
                         tilesOrigin: map.maxExtent.left + ',' + map.maxExtent.bottom
                     },
                     {
                         buffer: 0,
                         displayOutsideMaxExtent: true,
                         isBaseLayer: true
+
                     }
-           );
+            );
 
-           markersLayer = new OpenLayers.Layer.Markers("Markers");
+            //google layer
+            gmap = new OpenLayers.Layer.Google(
+                "Google Streets", // the default
+                {numZoomLevels: 20,
+                projection: "EPSG:900913"
 
-           map.addLayers([layers, vectorLayer, markersLayer]);
+            }
+            );
 
-            //add Control   
+            // layer for points
+            var renderer = OpenLayers.Util.getParameters(window.location.href).renderer;
+            renderer = (renderer) ? [renderer] : OpenLayers.Layer.Vector.prototype.renderers;
+            var style_green = {
+                strokeColor: "#00FF00",
+                strokeWidth: 3,
+                strokeDashstyle: "dashdot",
+                pointRadius: 6,
+                pointerEvents: "visiblePainted"
+            };
+            vectorLayer = new OpenLayers.Layer.Vector("Point Layer"
+
+            );
+
+            // marker Layer
+            markersLayer = new OpenLayers.Layer.Markers("Markers");
+
+            // Selected Layer
+            selectedLayer = new OpenLayers.Layer.Vector("Selection", { styleMap:
+                new OpenLayers.Style(OpenLayers.Feature.Vector.style["select"])
+            });
+            var hover = new OpenLayers.Layer.Vector("Hover");
+
+            // -----add all Layers----
+            map.addLayers([layers, vectorLayer, selectedLayer, hover, markersLayer]);
+
+            //-------------------------------build up all controls---------------------------------- 
+            //Switcher Control
+            map.addControl(new OpenLayers.Control.LayerSwitcher());
+
+            //Draw feature Control-0
             map.addControl(new OpenLayers.Control.DrawFeature(vectorLayer, OpenLayers.Handler.Point));
-            // build up all controls
+
+            //PanZoom Control-1
             map.addControl(new OpenLayers.Control.PanZoomBar({
                 position: new OpenLayers.Pixel(2, 15)
             }));
+            //Navigation Control-2
             map.addControl(new OpenLayers.Control.Navigation());
+
+            //Scale Control-3
             map.addControl(new OpenLayers.Control.Scale($('scale')));
+
+            //Mouse position Control-4
             map.addControl(new OpenLayers.Control.MousePosition({ element: $('location') }));
+
+            //---------------------------------------------------------------------------------------
             map.zoomToExtent(bounds);
 
             //add handler
@@ -82,13 +128,16 @@ function init() {
                 //X: e.xy.x,
                 //Y: e.xy.y,
                 //QUERY_LAYERS: map.layers[0].params.LAYERS,
-                //Layers: 'sde:QUAN1_RG_HCXA',
+                //Layers: 'sde:QUAN1_RG',
                 //WIDTH: map.size.w,
                 //HEIGHT: map.size.h,
+                //xoa het features hien tai
+                if (mapid == 0) return;
+                vectorLayer.destroyFeatures();
 
                 var bbox = change2Str(map.getExtent().toBBOX());
                 var x = e.xy.x, y = e.xy.y;
-                var layer = change2Str('sde:QUAN1_RG_HCXA');
+                var layer = change2Str(currentLayerName); //change2Str('sde:QUAN1_RG'); //hardcode
                 var w = map.size.w, h = map.size.h;
                 var actions = '[{"name":"action","value":"GetInfo"}'
                                     + ',{"name":"bbox","value":' + bbox + '}'
@@ -98,13 +147,76 @@ function init() {
                                     + ',{"name":"width","value":' + w + '}'
                                     + ',{"name":"height","value":' + h + '}'
                                     + ']';
-                getInfo2(actions, showInfo);
+                getInfoWhenClickOnMap(actions, processFeatureInfo);
 
             });
 
-           
+            /////////////////////////////////////////////////////////////
+            getMapView();
         }
     );
-    
-    
+
+
+}
+
+
+function getAllStreet() {
+    url = 'Server.aspx?action=GetAllStreet';
+    req = getAjax();
+    req.onreadystatechange = function () {
+        if (req.readyState == 4 && req.status == 200) {
+            var jSon
+            var myObject = "jSon=" + req.responseText;
+            eval(myObject);
+
+            allAddress = [];
+            for (var i = 0; i < jSon.length; i++) {
+                var addr = [i, jSon[i].Street + ", " + jSon[i].Ward + ", " + jSon[i].District];
+                allAddress.push(addr);
+            }
+            comboAdrress.store = new Ext.data.ArrayStore({
+                fields: ['cid', 'district'],
+                data: allAddress
+            });
+        }
+
+    }
+
+    req.open('GET', url, true);
+    req.send(null);
+}
+
+function getMapView() {
+    url = 'Server.aspx?action=GetMapView';
+    req = getAjax();
+    req.onreadystatechange = function () {
+        if (req.readyState == 4 && req.status == 200) {
+            var jSon;
+            var myObject = "jSon=" + req.responseText;
+            eval(myObject);
+
+            districts = [];
+            for (var i = 0; i < jSon.length; i++) {
+                var row = jSon[i];
+                var arr = [row.ID, row.Name];
+                districts.push(arr);
+            }
+
+            var dataStore = new Ext.data.ArrayStore({
+                fields: ['cid', 'district'],
+                data: districts
+            });
+
+
+            comboDistricts.store = dataStore;
+            //alert("here");
+
+            ///////////////////////////////
+            getAllStreet();
+        }
+
+    }
+
+    req.open('GET', url, true);
+    req.send(null);
 }

@@ -1,83 +1,117 @@
 ﻿Ext.onReady(function () {
     Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
-    var comboDistricts = new Ext.form.ComboBox({
-            height:5,
-            typeAhead: true,
-            triggerAction: 'all',
-            lazyRender: true,
-            mode: 'local',
-            id: 'combo-district',
-            valueNotFoundText: 'Unknown',
-            margins: {
-                top: 10,
-                right: 0,
-                bottom: 10,
-                left: 10
-            },
-            store: new Ext.data.ArrayStore({
-                fields: ['cid', 'district'],
-                data: districts
-            }),
-            valueField: 'cid',
-            displayField: 'district',
-            listeners: { select: {
-                fn: function (combo, value) {
-                    //get map
-                    //?action=GetMap&map_id=1
+    comboAdrress = new Ext.form.ComboBox({
+        height: 5,
+        typeAhead: true,
+        maxHeight: 100,
+        hideTrigger: true, //use to hide nut so xuong
+        triggerAction: 'all',
+        lazyRender: true,
+        mode: 'local',
+        id: 'combo-street',
+        valueNotFoundText: 'Không có địa chỉ này',
+        margins: {
+            top: 10,
+            right: 0,
+            bottom: 10,
+            left: 10
+        },
+        store: new Ext.data.ArrayStore({
+            fields: ['id', 'address'],
+            data: []
+        }),
+        valueField: 'id',
+        displayField: 'address',
+        listeners: { select: {
+            fn: function (combo, value) {
+                //get map
+                alert(value);
 
-                    // moveTo(105.95344, 10.78479, 3);
-
-                    changeMapRequest(combo.getValue());
-                    
-                }
             }
-            }
-     });
-     
-     comboDistricts.setValue(0);
+        }
+        }
+    });
 
-    buttonObject = new Ext.Button({ 
-                        text: 'Tìm kiếm', 
-                        height: 32, 
-                        margins: {
-                            top: 5,
-                            right: 5,
-                            bottom: 10,
-                            left: 5
-                        }, 
-                        handler: searchAddress,
-                        icon: "images/icon_search.png"
-                   });
-    textField = new Ext.form.TextField({ 
-                        width: 600, 
-                        height: 32, 
-                        margins: {
-                            top: 5,
-                            right: 5,
-                            bottom: 10,
-                            left: 305
-                        }
-                    });
+    comboDistricts = new Ext.form.ComboBox({
+        height: 5,
+        typeAhead: true,
+        maxHeight: 200,
+        //hideTrigger:true, //use to hide nut so xuong
+        triggerAction: 'all',
+        lazyRender: true,
+        mode: 'local',
+        id: 'combo-district',
+        valueNotFoundText: 'Không có',
+        margins: {
+            top: 10,
+            right: 0,
+            bottom: 10,
+            left: 10
+        },
+        store: new Ext.data.ArrayStore({
+            fields: ['cid', 'district'],
+            data: districts
+        }),
+        valueField: 'cid',
+        displayField: 'district',
+        listeners: { select: {
+            fn: function (combo, value) {
+                //get map
+                //?action=GetMap&map_id=1
+
+                // moveTo(105.95344, 10.78479, 3);
+                changeMapRequest(combo.getValue());
+
+            }
+        }
+        }
+    });
+
+    comboDistricts.setValue(0);
+
+    buttonObject = new Ext.Button({
+        text: 'Tìm kiếm',
+        height: 32,
+        margins: {
+            top: 5,
+            right: 5,
+            bottom: 10,
+            left: 5
+        },
+        handler: searchAddress,
+        icon: "images/icon_search.png"
+    });
+    textField = new Ext.form.TextField({
+        width: 600,
+        height: 32,
+        margins: {
+            top: 5,
+            right: 5,
+            bottom: 10,
+            left: 305
+        }
+    });
 
     // Tabs
-    tabSearchAddress =  new Ext.Panel ({
+    tabSearchAddress = new Ext.Panel({
         title: 'Tìm địa chỉ',
         html: '<p>Kết quả tìm kiếm</p>',
         height: 550,
         autoScroll: true
     });
-    tabInfo = new Ext.Panel ({
+    tabInfo = new Ext.Panel({
         title: 'Thông tin',
         html: ''
     });
     tabPanel = new Ext.TabPanel({
-                        border: false, // already wrapped so don't add another border
-                        activeTab: 0, // second tab initially active
-                        // tabPosition: 'bottom',
-                        items: [tabSearchAddress, tabInfo]
-                    });
+        border: false, // already wrapped so don't add another border
+        activeTab: 0, // second tab initially active
+        // tabPosition: 'bottom',
+        items: [tabSearchAddress, tabInfo]
+    });
 
+    //////////////////////////////////////////////////////////////
     var viewport = new Ext.Viewport({
         layout: {
             type: 'border',
@@ -88,19 +122,8 @@
         },
         items: [
 
-        // create instance immediately
-            /*
-            new Ext.BoxComponent({
+            {
                 region: 'north',
-                height: 32, // give north and south regions a height
-                autoEl: {
-                    tag: 'div',
-                    html: '<p>north - generally for menus, toolbars and/or advertisements</p>'
-                }
-            }), 
-            */
-            new Ext.Panel({
-                region: 'north', // a center region is ALWAYS required for border layout
                 layout: 'hbox',
                 height: 42,
                 boxMaxHeight: 42,
@@ -111,15 +134,17 @@
                     buttonObject,
                     comboDistricts
                 ]
-            }),
+            }
+            ,
+
             {
                 region: 'west',
                 id: 'west-panel', // see Ext.getCmp() below
                 // title: 'Kết quả tìm kiếm',
                 split: true,
                 width: 300,
-                boxMinWidth: 300,
-                boxMaxWidth: 300,
+                minSize: 300,
+                maxSize: 400,
                 // collapsible: true,
                 // margins: '0 0 0 5',
                 items: tabPanel
@@ -128,7 +153,7 @@
                 region: 'center', // a center region is ALWAYS required for border layout
                 // deferredRender: false,
                 items: [{
-                    contentEl: 'center',
+                    contentEl: 'center'
                 }]
             })
         ]
@@ -143,8 +168,7 @@
 });
 
 function searchAddress() {
-    if (textField.getValue().trim() == '')
-    {
+    if (textField.getValue().trim() == '') {
         return;
     }
 
@@ -184,33 +208,33 @@ function searchAddress() {
             points.push(new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(lng, lat), null, null));
 
             // TODO test marker
-            
+
 
             /*
             popup = new OpenLayers.Popup.Anchored("Example",
-                                         new OpenLayers.LonLat(lng, lat),
-                                         new OpenLayers.Size(200, 50),
-                                         "Welcome to F-Map");
-                                         */
+            new OpenLayers.LonLat(lng, lat),
+            new OpenLayers.Size(200, 50),
+            "Welcome to F-Map");
+            */
             popup = new OpenLayers.Popup.FramedCloud("featurePopup",
                                      new OpenLayers.LonLat(lng, lat),
-                                     new OpenLayers.Size(100,100),
-                                     "<h2>"+"The title" + "</h2>" +
+                                     new OpenLayers.Size(100, 100),
+                                     "<h2>" + "The title" + "</h2>" +
                                      "description",
                                      null, true, null);
 
             popup.hide();
             map.addPopup(popup);
 
-            var point  = new OpenLayers.LonLat(lng, lat)
+            var point = new OpenLayers.LonLat(lng, lat)
             var marker = new OpenLayers.Marker(point);
 
             addMarker(marker, lng, lat, parsedJSON[i].SoNha, parsedJSON[i].TenDuong);
             // END TEST
 
             // addPoint(lng, lat);
-            searchResults = searchResults 
-                + '<span style="cursor:pointer;" onclick="moveTo(' + lng + ',' + lat + ');"><i>' 
+            searchResults = searchResults
+                + '<span style="cursor:pointer;" onclick="moveTo(' + lng + ',' + lat + ');"><i>'
                 + "<b>Số nhà </b>" + parsedJSON[i].SoNha + ", <b>Tên đường </b>" + parsedJSON[i].TenDuong + "<br/>"
                 + '</i></span>';
         }
@@ -231,30 +255,30 @@ function addPoints(points) {
 
 function addMarker(marker, lng, lat, sonha, tenduong) {
     marker.events.register("click", marker, function (evt) {
-                if (currentPopup != null) {
-                    currentPopup.hide();
-                }
+        if (currentPopup != null) {
+            currentPopup.hide();
+        }
 
-                if (this.popup == null) {
-                    // this.popup = this.createPopup(this.closeBox);
+        if (this.popup == null) {
+            // this.popup = this.createPopup(this.closeBox);
 
-                    this.popup = new OpenLayers.Popup.FramedCloud("address",
+            this.popup = new OpenLayers.Popup.FramedCloud("address",
                                      new OpenLayers.LonLat(lng, lat),
-                                     new OpenLayers.Size(100,100),
-                                     "<h2>"+ sonha + "</h2>" + tenduong,
+                                     new OpenLayers.Size(100, 100),
+                                     "<h2>" + sonha + "</h2>" + tenduong,
                                      null, true, null);
 
-                    map.addPopup(this.popup);
-                    this.popup.show();
-                } else {
-                    this.popup.toggle();
-                }
-                currentPopup = this.popup;
+            map.addPopup(this.popup);
+            this.popup.show();
+        } else {
+            this.popup.toggle();
+        }
+        currentPopup = this.popup;
 
-                // moveTo(lng, lat);
+        // moveTo(lng, lat);
 
-                OpenLayers.Event.stop(evt);
-            });
+        OpenLayers.Event.stop(evt);
+    });
 
     markersLayer.addMarker(marker);
 }

@@ -7,7 +7,7 @@ OpenLayers.IMAGE_RELOAD_ATTEMPTS = 5;
 // make OL compute scale according to WMS spec
 OpenLayers.DOTS_PER_INCH = 25.4 / 0.28;
 
-function init() {
+function initMap() {
     // if this is just a coverage or a group of them, disable a few items,
     // and default to jpeg format
     format = 'image/png';
@@ -22,8 +22,8 @@ function init() {
     }
 
     var bounds = new OpenLayers.Bounds(
-                    105.93, 10.758,
-                    105.961, 10.801
+                    106.682, 10.753,
+                    106.714, 10.797
                 );
     var options = {
         controls: [],
@@ -32,13 +32,13 @@ function init() {
         projection: "EPSG:4326",
         units: 'degrees'
     };
-    map = new OpenLayers.Map('map', options);
+    map = new OpenLayers.Map('center', options);
 
     // setup tiled layer
     tiled = new OpenLayers.Layer.WMS(
-                    "sde:QUAN1_RG_HCXA - Tiled", "http://localhost:8080/geoserver/wms",
+                    "sde:QUAN1_RG - Tiled", "http://localhost:8080/geoserver/wms",
                     {
-                        LAYERS: 'sde:QUAN1_RG_HCXA',
+                        LAYERS: 'sde:QUAN1_RG',
                         STYLES: 'Quan1_Style',
                         format: format,
                         tiled: !pureCoverage,
@@ -53,20 +53,21 @@ function init() {
 
     // setup single tiled layer
     untiled = new OpenLayers.Layer.WMS(
-                    "sde:QUAN1_RG_HCXA - Untiled", "http://localhost:8080/geoserver/wms",
+                    "sde:QUAN1_RG - Untiled", "http://localhost:8080/geoserver/wms",
                     {
-                        LAYERS: 'sde:QUAN1_RG_HCXA',
+                        LAYERS: 'sde:QUAN1_RG',
                         STYLES: 'Quan1_Style',
                         format: format
                     },
                     { singleTile: true, ratio: 1, isBaseLayer: true }
                 );
 
-    map.addLayers([untiled, tiled]);
+    map.addLayers([tiled]);
 
     // build up all controls
+    //alert(viewportwidth);
     map.addControl(new OpenLayers.Control.PanZoomBar({
-        position: new OpenLayers.Pixel(2, 15)
+        position: new OpenLayers.Pixel(viewportwidth- 670, 20)
     }));
     map.addControl(new OpenLayers.Control.Navigation());
     map.addControl(new OpenLayers.Control.Scale($('scale')));
@@ -74,43 +75,43 @@ function init() {
     map.zoomToExtent(bounds);
 
     // wire up the option button
-    var options = document.getElementById("options");
-    options.onclick = toggleControlPanel;
+//    var options = document.getElementById("options");
+//    options.onclick = toggleControlPanel;
 
-    // support GetFeatureInfo
-    map.events.register('click', map, function (e) {
-        document.getElementById('nodelist').innerHTML = "Loading... please wait...";
-        var params = {
-            REQUEST: "GetFeatureInfo",
-            EXCEPTIONS: "application/vnd.ogc.se_xml",
-            BBOX: map.getExtent().toBBOX(),
-            SERVICE: "WMS",
-            VERSION: "1.1.1",
-            X: e.xy.x,
-            Y: e.xy.y,
-            INFO_FORMAT: 'text/html',
-            QUERY_LAYERS: map.layers[0].params.LAYERS,
-            FEATURE_COUNT: 50,
-            Layers: 'sde:QUAN1_RG_HCXA',
-            WIDTH: map.size.w,
-            HEIGHT: map.size.h,
-            format: format,
-            styles: map.layers[0].params.STYLES,
-            srs: map.layers[0].params.SRS
-        };
-        // merge filters
-        if (map.layers[0].params.CQL_FILTER != null) {
-            params.cql_filter = map.layers[0].params.CQL_FILTER;
-        }
-        if (map.layers[0].params.FILTER != null) {
-            params.filter = map.layers[0].params.FILTER;
-        }
-        if (map.layers[0].params.FEATUREID) {
-            params.featureid = map.layers[0].params.FEATUREID;
-        }
-        OpenLayers.loadURL("http://localhost:8080/geoserver/wms", params, this, setHTML, setHTML);
-        OpenLayers.Event.stop(e);
-    });
+//    // support GetFeatureInfo
+//    map.events.register('click', map, function (e) {
+//        document.getElementById('nodelist').innerHTML = "Loading... please wait...";
+//        var params = {
+//            REQUEST: "GetFeatureInfo",
+//            EXCEPTIONS: "application/vnd.ogc.se_xml",
+//            BBOX: map.getExtent().toBBOX(),
+//            SERVICE: "WMS",
+//            VERSION: "1.1.1",
+//            X: e.xy.x,
+//            Y: e.xy.y,
+//            INFO_FORMAT: 'text/html',
+//            QUERY_LAYERS: map.layers[0].params.LAYERS,
+//            FEATURE_COUNT: 50,
+//            Layers: 'sde:QUAN1_RG',
+//            WIDTH: map.size.w,
+//            HEIGHT: map.size.h,
+//            format: format,
+//            styles: map.layers[0].params.STYLES,
+//            srs: map.layers[0].params.SRS
+//        };
+//        // merge filters
+//        if (map.layers[0].params.CQL_FILTER != null) {
+//            params.cql_filter = map.layers[0].params.CQL_FILTER;
+//        }
+//        if (map.layers[0].params.FILTER != null) {
+//            params.filter = map.layers[0].params.FILTER;
+//        }
+//        if (map.layers[0].params.FEATUREID) {
+//            params.featureid = map.layers[0].params.FEATUREID;
+//        }
+//        OpenLayers.loadURL("http://localhost:8080/geoserver/wms", params, this, setHTML, setHTML);
+//        OpenLayers.Event.stop(e);
+//    });
 }
 
 // sets the HTML provided into the nodelist element
