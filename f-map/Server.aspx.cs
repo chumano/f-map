@@ -15,15 +15,28 @@ using System.Text.RegularExpressions;
 
 public partial class Server : System.Web.UI.Page
 {
+    Service.WMS.WMS wms = new Service.WMS.WMS("http://localhost:8080/geoserver/wms?");
     protected void Page_Load(object sender, EventArgs e)
     {
         if (Request["action"] != null && Request["action"].Trim() != "")
         {
             switch (Request["action"])
             {
+                case "Test":
+                    Test t = new Test();
+                    string s = t.run();
+                    Response.Write(s);
+                 
+                    break;
+                case "GetMapView":
+                    getMapView();
+                    break;
+                case "GetAllStreet":
+                    getAllStreetName();
+                    break;
                 case "GetInfo":
-                    // http://localhost:8080/geoserver/wms?REQUEST=GetFeatureInfo&BBOX={0}&SERVICE=WMS&VERSION=1.1.1&X={1}&Y={2}
-                    // &INFO_FORMAT=text/plain&QUERY_LAYERS={3}&FEATURE_COUNT=50&Layers={4}&WIDTH={5}&HEIGHT={6}&srs=EPSG:4326
+                    //// http://localhost:8080/geoserver/wms?REQUEST=GetFeatureInfo&BBOX={0}&SERVICE=WMS&VERSION=1.1.1&X={1}&Y={2}
+                    //// &INFO_FORMAT=text/plain&QUERY_LAYERS={3}&FEATURE_COUNT=50&Layers={4}&WIDTH={5}&HEIGHT={6}&srs=EPSG:4326
                     string url = String.Format(Config.URL_GET_INFO,
                                                 Request["bbox"],
                                                 Request["x"],
@@ -32,7 +45,12 @@ public partial class Server : System.Web.UI.Page
                                                 Request["layer_name"],
                                                 Request["width"],
                                                 Request["height"]);
-                    GetInfo(url);
+                    //GetInfo(url);
+                    BoundingBox bbox = new BoundingBox(Request["bbox"]);
+                    Service.WMS.FeatureInfoRequest req = new Service.WMS.FeatureInfoRequest(Request["layer_name"],bbox,
+                                                Convert.ToDouble(Request["width"]),Convert.ToDouble(Request["height"]),
+                                                Convert.ToDouble(Request["x"]),Convert.ToDouble(Request["y"]));
+                    Response.Write(wms.GetFeatrueInfo(req));
                     break;
 
                 case "GetMap":
@@ -72,7 +90,7 @@ public partial class Server : System.Web.UI.Page
         return responseStream.ReadToEnd();
     }
 
-    #region GetInfo API
+    #region GetInfo about a point clicked API
 
     private void GetInfo(string url)
     {
@@ -113,7 +131,7 @@ public partial class Server : System.Web.UI.Page
         // mapId = "1";
 
         // Get map bound
-        DataTable dt = Helper.GetDataTable("select * from MapView where ID = " + mapId);
+        DataTable dt = Helper.GetDataTable("select * from MapView where ID = " + mapId );
 
         DataRow row = dt.Rows[0];
         BoundModel bound = new BoundModel();
@@ -150,7 +168,11 @@ public partial class Server : System.Web.UI.Page
 
     private void GetWards(string districtId)
     {
-        DataTable dt = Helper.GetDataTable2("select * from QUAN" + districtId + "_RG_HCXA");
+        //toanthanh
+        if (districtId == "0") return;
+
+        //hardcode
+        DataTable dt = Helper.GetDataTable2("select * from QUAN" + districtId + "_RG");
         string[] wards = new string[dt.Rows.Count];
         for (int i = 0; i < dt.Rows.Count; ++i)
         {
@@ -229,6 +251,50 @@ public partial class Server : System.Web.UI.Page
         return result;
     }
 
+    // ----------------------------------------------------------
+    protected void getAllStreetName()
+    {
+        string sqlStr = "SELECT NoName, StreetName, WardName, IDWard, DistrictName From vw_address";
+        DataTable tbl = Helper.GetDataTable(sqlStr);
+        if (tbl.Rows.Count > 0)
+        {
+            List<StreetInfo> list = new List<StreetInfo>();
+            foreach (DataRow row in tbl.Rows)
+            {
+                StreetInfo addr = new StreetInfo();
+                addr.NoName = row[0].ToString();
+                addr.StreetName = row[1].ToString();
+                addr.WardName = row[2].ToString();
+                addr.IDWard = row[3].ToString();
+                addr.DistrictName = row[4].ToString();
+
+                list.Add(addr);
+            }
+
+            Response.Write(JsonConvert.SerializeObject(list));
+        }
+    }
+
+    private void getMapView()
+    {
+        string sqlStr = "SELECT ID, Name From MapView Order by ID";
+        DataTable tbl = Helper.GetDataTable(sqlStr);
+        if (tbl.Rows.Count > 0)
+        {
+            List<MapView> list = new List<MapView>();
+            foreach (DataRow row in tbl.Rows)
+            {
+                MapView view = new MapView(Convert.ToInt32(row[0]), row[1].ToString());
+                
+                list.Add(view);
+            }
+
+            Response.Write(JsonConvert.SerializeObject(list));
+        }
+    }
+
+    // -----------------------------------------------------------
+
     private int getNumberFromText(string txt)
     {
         System.Text.RegularExpressions.Regex re = new Regex(@"\d+");
@@ -264,7 +330,9 @@ public partial class Server : System.Web.UI.Page
         {
             tblName = tbl.Rows[i][0].ToString();
             string _MaDuong = tbl.Rows[i][1].ToString();
-            tbl2 = Helper.GetDataTable2("Select X, Y, SoNha From " + tblName + " WHERE MaPhuong=N'" + Ward + "' AND IDConDuong='" + _MaDuong + "' AND SoNha='" + NoAdd + "'");
+            tbl2 = Helper.GetDataTable2("Select X, Y, SoNha From " + tblName 
+                                        + " WHERE MaPhuong=N'" + Ward 
+                                        + "' AND IDConDuong='" + _MaDuong + "' AND SoNha='" + NoAdd + "'");
             if (tbl2.Rows.Count > 0)
             {
                 //tim thay co
@@ -280,7 +348,8 @@ public partial class Server : System.Web.UI.Page
             string _SoNha = "";
 
             int min = 50000;
-            tbl2 = Helper.GetDataTable2("Select oid, SoNha, X, Y From " + tblName + " WHERE MaPhuong=N'" + Ward + "' AND IDConDuong='" + _MaDuong + "'");
+            tbl2 = Helper.GetDataTable2("Select oid, SoNha, X, Y From " + tblName 
+                                        + " WHERE MaPhuong=N'" + Ward + "' AND IDConDuong='" + _MaDuong + "'");
             for (int j = 0; j < tbl2.Rows.Count; j++)
             {
                 _SoNha = tbl2.Rows[j]["SoNha"].ToString();

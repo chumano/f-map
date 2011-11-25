@@ -1,4 +1,4 @@
-﻿var districts = [
+﻿ districts = [
      ['0', 'Toàn Thành']
     , ['1', 'Quận 1']
     , ['2', 'Quận 2']
