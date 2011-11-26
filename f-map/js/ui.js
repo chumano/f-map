@@ -2,35 +2,70 @@
     Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
     comboAdrress = new Ext.form.ComboBox({
-        height: 5,
-        typeAhead: true,
-        maxHeight: 100,
+        width: 600,
+        height: 32,
+        /*typeAhead: true,*/
+        margins: {
+            top: 5,
+            right: 5,
+            bottom: 10,
+            left: 305
+        },
         hideTrigger: true, //use to hide nut so xuong
         triggerAction: 'all',
+        lastQuery: '',
+        autoSelect: false,
         lazyRender: true,
         mode: 'local',
         id: 'combo-street',
         valueNotFoundText: 'Không có địa chỉ này',
-        margins: {
-            top: 10,
-            right: 0,
-            bottom: 10,
-            left: 10
-        },
+        /*
         store: new Ext.data.ArrayStore({
-            fields: ['id', 'address'],
-            data: []
+        fields: ['id', 'address'],
+        data: []
         }),
+        */
         valueField: 'id',
         displayField: 'address',
-        listeners: { select: {
-            fn: function (combo, value) {
-                //get map
-                alert(value);
-
+        listeners: {
+            'select': {
+                fn: function (combo, value) {
+                    // alert(value.data.id);
+                }
             }
         }
+    });
+
+    sonha = '';
+    comboAdrress.on('beforequery', function (q) {
+        index = 0;
+        query = q.query;
+        for (; index < query.length; ++index) {
+            if (query.charAt(index) == ' ') {
+                break;
+            }
         }
+
+        newQuery = '';
+        if (index > 0) {
+            newQuery = query.substring(index + 1, this.getRawValue().length);
+            sonha = query.substring(0, index);
+        } else {
+            sonha = '';
+            newQuery = query;
+        }
+
+        if (newQuery != '') {
+            q.query = newQuery;
+            return true;
+        } else {
+            return false;
+        }
+    });
+
+    comboAdrress.on('beforeselect', function (combox, record, index) {
+        record.data.address = sonha + ' ' + record.data.address;
+        return true;
     });
 
     comboDistricts = new Ext.form.ComboBox({
@@ -130,7 +165,7 @@
                 boxMinHeight: 42,
                 bodyStyle: "background-color:#133783 !important",
                 items: [
-                    textField,
+                    comboAdrress, // textField,
                     buttonObject,
                     comboDistricts
                 ]
