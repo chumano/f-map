@@ -135,14 +135,17 @@
         height: 550,
         autoScroll: true
     });
+    
     tabInfo = new Ext.Panel({
         title: 'Thông tin',
-        html: ''
+        html: str,
+        autoScroll: true,
+        height: 550
     });
     tabPanel = new Ext.TabPanel({
         border: false, // already wrapped so don't add another border
-        activeTab: 0, // second tab initially active
-        // tabPosition: 'bottom',
+        activeTab: 0,
+        defaults: { autoScroll: true },
         items: [tabSearchAddress, tabInfo]
     });
 
