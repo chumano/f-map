@@ -1,0 +1,10 @@
+C:\Users\CondorHero89\AppData\Local\Temporary Projects\StyleGenerator\bin\Debug\StyleGenerator.exe
+C:\Users\CondorHero89\AppData\Local\Temporary Projects\StyleGenerator\bin\Debug\StyleGenerator.pdb
+C:\Users\CondorHero89\AppData\Local\Temporary Projects\StyleGenerator\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\CondorHero89\AppData\Local\Temporary Projects\StyleGenerator\obj\Debug\StyleGenerator.exe
+C:\Users\CondorHero89\AppData\Local\Temporary Projects\StyleGenerator\obj\Debug\StyleGenerator.pdb
+F:\LuanVanMoi\StyleGenerator\StyleGenerator\obj\Debug\StyleGenerator.exe
+F:\LuanVanMoi\StyleGenerator\StyleGenerator\obj\Debug\StyleGenerator.pdb
+F:\LuanVanMoi\StyleGenerator\StyleGenerator\obj\Debug\ResolveAssemblyReference.cache
+F:\LuanVanMoi\StyleGenerator\StyleGenerator\bin\Debug\StyleGenerator.exe
+F:\LuanVanMoi\StyleGenerator\StyleGenerator\bin\Debug\StyleGenerator.pdb
