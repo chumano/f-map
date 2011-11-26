@@ -168,11 +168,23 @@ public partial class Server : System.Web.UI.Page
 
     private void GetWards(string districtId)
     {
+        string[] districtNames = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "BT", "BTH", "GV", "PN", "TP", "TD", "TB", "BC" };
+
         //toanthanh
         if (districtId == "0") return;
 
+        string prefix = null;
+        if (int.Parse(districtId) == districtNames.Length)
+        {
+            prefix = "HUYEN";
+        }
+        else
+        {
+            prefix = "QUAN";
+        }
+
         //hardcode
-        DataTable dt = Helper.GetDataTable2("select * from QUAN" + districtId + "_RG");
+        DataTable dt = Helper.GetDataTable2("select * from " + prefix + districtNames[int.Parse(districtId)] + "_RG_PROJECT");
         string[] wards = new string[dt.Rows.Count];
         for (int i = 0; i < dt.Rows.Count; ++i)
         {
