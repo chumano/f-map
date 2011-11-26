@@ -48,7 +48,7 @@ function init() {
 
             layers = new OpenLayers.Layer.WMS(
                     "Geoserver layers", hostURL,
-                    {
+                   { 
                         LAYERS: layerNames, //'sde:QUAN1_RG',
                         STYLES: styleNames, //'Quan1_Style',
                         format: format,
