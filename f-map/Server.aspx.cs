@@ -174,7 +174,7 @@ public partial class Server : System.Web.UI.Page
         if (districtId == "0") return;
 
         string prefix = null;
-        if (int.Parse(districtId) == districtNames.Length)
+        if (int.Parse(districtId) == districtNames.Length - 1)
         {
             prefix = "HUYEN";
         }
@@ -200,6 +200,7 @@ public partial class Server : System.Web.UI.Page
 
     private void SearchAddress(string keyword)
     {
+        // 268 ly thuong kiet
         keyword = NameUtil.GetInstance().Convert(keyword);
         string[] keys = keyword.Split(',');
         string query = null;
