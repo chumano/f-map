@@ -171,13 +171,14 @@ function getAllStreet() {
 
             allAddress = [];
             for (var i = 0; i < jSon.length; i++) {
-                var addr = [i, jSon[i].Street + ", " + jSon[i].Ward + ", " + jSon[i].District];
+                var addr = [i, jSon[i].NoName + ", " + jSon[i].WardName + ", " + jSon[i].DistrictName];
                 allAddress.push(addr);
             }
-            comboAdrress.store = new Ext.data.ArrayStore({
-                fields: ['cid', 'district'],
+            comboAdrress.store = new Ext.data.SimpleStore({
+                fields: ['id', 'address'],
                 data: allAddress
             });
+            // comboAdrress.store.filter('address', "a");
         }
 
     }
