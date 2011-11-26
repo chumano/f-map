@@ -23,6 +23,8 @@
     <script type="text/javascript" src="openlayers/mapinfo.js"></script>
     <script type="text/javascript" src="js/ui.js"></script>
     <script type='text/javascript' src='openlayers/map.js'></script>
+    <script type='text/javascript' src='openlayers/draw.js'></script>
+    <script type='text/javascript' src='js/googleUtils.js'></script>
     <script type="text/javascript">
         function test() {
             var url = serverURL + "?action=Test";
@@ -38,6 +40,19 @@
             req.send(null);
         }
 
+        function GoogleMap() {
+            var p1 = new OpenLayers.Geometry.Point(106.61547, 10.80296);
+            var p2 = new OpenLayers.Geometry.Point(106.70262, 10.71830);
+            var p3 = new OpenLayers.Geometry.Point(106.72717, 10.77373);
+            var start = new google.maps.LatLng(10.80296, 106.61547);
+            var end = new google.maps.LatLng(10.71830, 106.70262);
+            var points = [];
+            points.push(p1);
+            points.push(p2); points.push(p3);
+            drawLineFromPoints(points);
+
+            findRoute(start, end);
+        }
 
         function initAll() {
 
@@ -73,7 +88,7 @@
 
     <!----------- FLOATING ------------->
     <div style="position: fixed; top: 20px; right: 20px; z-index: 1001">
-        <input type="button" id="Button1" onclick="addGoogleMap()" value="Google" />
+        <input type="button" id="Button1" onclick="GoogleMap()" value="Google" />
         <input type="button" id="show-btn" onclick="test()" value="Test" />
     </div>
 
