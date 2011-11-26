@@ -13,7 +13,7 @@ function init() {
     var options = {
         controls: [],
         //maxExtent: bounds,
-        numZoomLevels: 6,
+        numZoomLevels: 20,
         maxResolution: 0.00016796875,
         projection: "EPSG:4326",
         units: 'degrees'
