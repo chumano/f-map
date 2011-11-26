@@ -27,6 +27,7 @@
     <script type='text/javascript' src='js/googleUtils.js'></script>
     <script type="text/javascript">
         function test() {
+            /*
             var url = serverURL + "?action=Test";
             req = getAjax();
 
@@ -38,6 +39,17 @@
             }
             req.open('GET', url, true);
             req.send(null);
+            */
+            testScrollView();
+        }
+
+        function testScrollView() {
+            str = '';
+            for (i = 0; i < 1000; ++i) {
+                str += "message <br />" ;
+            }
+            tabPanel.setActiveTab(1);
+            tabInfo.update(str);
         }
 
         function GoogleMap() {
