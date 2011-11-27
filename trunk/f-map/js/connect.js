@@ -43,9 +43,9 @@ function processFeatureInfo(response) {
         str += jSon[0].Attrs[i].Name + " : " + jSon[0].Attrs[i].Value + '<br/>';
     }
 
-    //update info
-    tabPanel.setActiveTab(1);
-    tabInfo.update(str);
+    //update info - SHOWDIV
+    //tabPanel.setActiveTab(1);
+    //tabInfo.update(str);
 
     //UTM2LatLng
     //    var utm1 = new UTMRef(X1, Y1, "N", 48);
@@ -198,8 +198,8 @@ function changeMap(response) {
                 str += '<i>' + jSon[i] + '</i>';
             }
 
-            tabPanel.setActiveTab(1);
-            tabInfo.update(str);
+            //tabPanel.setActiveTab(1);
+            //tabInfo.update(str);
         }
     );
 
@@ -209,9 +209,9 @@ function changeMap(response) {
 function changeMapRequest(mid) {
     //clear FeatureVector
     vectorLayer.destroyFeatures();
-
-    tabPanel.setActiveTab(1);
-    tabInfo.update('');
+   //ShowDIV
+   // tabPanel.setActiveTab(1);
+   // tabInfo.update('');
     //
     mapid = mid;
     var actions = '[{"name":"action","value":"GetMap"},{"name":"map_id","value":' + mapid + '}]';

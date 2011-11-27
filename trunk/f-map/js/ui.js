@@ -105,7 +105,7 @@
             bottom: 15,
             left: 10
         },
-        handler: checkAddress, //searchAddress,
+        handler: googleFindRoute, //searchAddress,
         icon: "images/icon_search.png"
     });
     tabRoute = new Ext.Panel({

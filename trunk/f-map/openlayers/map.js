@@ -99,7 +99,7 @@ function init() {
 
             //-------------------------------build up all controls---------------------------------- 
             //Switcher Control
-            map.addControl(new OpenLayers.Control.LayerSwitcher());
+            //map.addControl(new OpenLayers.Control.LayerSwitcher());
 
             //Draw feature Control-0
             map.addControl(new OpenLayers.Control.DrawFeature(vectorLayer, OpenLayers.Handler.Point));
@@ -218,14 +218,10 @@ function getMapView() {
             districts = [];
             for (var i = 0; i < jSon.length; i++) {
                 var row = jSon[i];
-<<<<<<< .mine
                 var arr = [row.ID, /*'<img src="images/icon_search.png" width="100" height="100" />' + */row.Name];
-=======
                 var num = i + 1;
                 var arr = [row.ID, row.Name,row.NoName];
->>>>>>> .r71
                 districts.push(arr);
-
             }
 
             var dataStore = new Ext.data.ArrayStore({
