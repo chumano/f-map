@@ -188,7 +188,16 @@ function getAllStreet() {
                 fields: ['id', 'address'],
                 data: dataStore
             });
-            // comboAddress.store.filter('address', "a");
+            comboAddressStart.store = new Ext.data.SimpleStore({
+                fields: ['id', 'address'],
+                data: dataStore
+            });
+            comboAddressEnd.store = new Ext.data.SimpleStore({
+                fields: ['id', 'address'],
+                data: dataStore
+            })
+
+            // comboAddress.clearValue();
         }
 
     }
@@ -209,8 +218,12 @@ function getMapView() {
             districts = [];
             for (var i = 0; i < jSon.length; i++) {
                 var row = jSon[i];
+<<<<<<< .mine
+                var arr = [row.ID, /*'<img src="images/icon_search.png" width="100" height="100" />' + */row.Name];
+=======
                 var num = i + 1;
                 var arr = [row.ID, row.Name,row.NoName];
+>>>>>>> .r71
                 districts.push(arr);
 
             }

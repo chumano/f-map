@@ -1,75 +1,14 @@
 ﻿Ext.onReady(function () {
     Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
-    comboAddress = new Ext.form.ComboBox({
-        width: 600,
-        height: 32,
-        /*typeAhead: true,*/
-        margins: {
-            top: 5,
-            right: 5,
-            bottom: 10,
-            left: 305
-        },
-        hideTrigger: true, //use to hide nut so xuong
-        triggerAction: 'all',
-        lastQuery: '',
-        autoSelect: false,
-        lazyRender: true,
-        mode: 'local',
-        id: 'combo-street',
-        valueNotFoundText: 'Không có địa chỉ này',
-        /*
-        store: new Ext.data.ArrayStore({
-        fields: ['id', 'address'],
-        data: []
-        }),
-        */
-        valueField: 'id',
-        displayField: 'address',
-        listeners: {
-            'select': {
-                fn: function (combo, value) {
-                    // alert(value.data.id);
-                }
-            }
-        }
-    });
-
-    sonha = '';
-    comboAddress.on('beforequery', function (q) {
-        index = 0;
-        query = q.query;
-        for (; index < query.length; ++index) {
-            if (query.charAt(index) == ' ') {
-                break;
-            }
-        }
-
-        newQuery = '';
-        if (index > 0) {
-            newQuery = query.substring(index + 1, this.getRawValue().length);
-            sonha = query.substring(0, index);
-        } else {
-            sonha = '';
-            newQuery = query;
-        }
-
-        if (newQuery != '') {
-            q.query = newQuery;
-            return true;
-        } else {
-            return false;
-        }
-    });
-
-    comboAddress.on('beforeselect', function (combox, record, index) {
-        record.data.address = sonha + ' ' + record.data.address;
-        return true;
-    });
+    comboAddress = createAutoCompleteAddressCombobox(
+        600,
+        15, 5, 15, 305,  // top, right, bottom, left
+        'Nhập địa chỉ bạn muốn tìm'
+    );
 
     comboDistricts = new Ext.form.ComboBox({
-        height: 5,
+        width: 600,
         typeAhead: true,
         maxHeight: 200,
         //hideTrigger:true, //use to hide nut so xuong
@@ -79,10 +18,10 @@
         id: 'combo-district',
         valueNotFoundText: 'Không có',
         margins: {
-            top: 10,
-            right: 0,
-            bottom: 10,
-            left: 10
+            top: 15,
+            right: 5,
+            bottom: 15,
+            left: 305
         },
         store: new Ext.data.ArrayStore({
             fields: ['id', 'district'],
@@ -105,13 +44,13 @@
 
     comboDistricts.setValue(0);
 
-    buttonObject = new Ext.Button({
+    btnSearchAddress = new Ext.Button({
         text: 'Tìm kiếm',
-        height: 32,
+        height: 22,
         margins: {
-            top: 5,
+            top: 15,
             right: 5,
-            bottom: 10,
+            bottom: 15,
             left: 5
         },
         handler: checkAddress, //searchAddress,
@@ -130,20 +69,57 @@
 
     // Tabs
     tabSearchAddress = new Ext.Panel({
-        title: 'Tìm địa chỉ',
-        html: '<p>Kết quả tìm kiếm</p>',
-        height: 550,
-        autoScroll: true
+        title: '                    Tìm địa chỉ',
+        height: 100,
+        layout: 'hbox',
+        items: [comboAddress, btnSearchAddress],
+        /*
+        boxMaxHeight: 42,
+        boxMinHeight: 42,
+        */
+        bodyStyle: "background-color:#d0ddf1 !important",
     });
     tabInfo = new Ext.Panel({
-        title: 'Thông tin',
-        html: ''
+        title: 'Quản lý',
+        items: comboDistricts,
+        layout: 'hbox',
+        bodyStyle: "background-color:#d0ddf1 !important"
     });
+
+    comboAddressStart = createAutoCompleteAddressCombobox(
+        400,
+        15, 5, 15, 100,  // top, right, bottom, left
+        'Địa chỉ bắt đầu'
+    );
+    comboAddressEnd = createAutoCompleteAddressCombobox(
+        400,
+        15, 5, 15, 10,  // top, right, bottom, left
+        'Địa chỉ kết thúc'
+    );
+    btnFindRoute = new Ext.Button({
+        text: 'Tìm đường',
+        height: 22,
+        margins: {
+            top: 15,
+            right: 5,
+            bottom: 15,
+            left: 10
+        },
+        handler: checkAddress, //searchAddress,
+        icon: "images/icon_search.png"
+    });
+    tabRoute = new Ext.Panel({
+        title: 'Tìm đường đi',
+        layout: 'hbox',
+        items: [comboAddressStart, comboAddressEnd, btnFindRoute],
+        bodyStyle: "background-color:#d0ddf1 !important",
+    });
+
     tabPanel = new Ext.TabPanel({
         border: false, // already wrapped so don't add another border
-        activeTab: 0, // second tab initially active
+        activeTab: 0   , // second tab initially active
         // tabPosition: 'bottom',
-        items: [tabSearchAddress, tabInfo]
+        items: [tabSearchAddress, tabRoute, tabInfo]
     });
 
     //////////////////////////////////////////////////////////////
@@ -156,22 +132,16 @@
             split: true
         },
         items: [
-
             {
                 region: 'north',
                 layout: 'hbox',
-                height: 42,
-                boxMaxHeight: 42,
-                boxMinHeight: 42,
-                bodyStyle: "background-color:#133783 !important",
-                items: [
-                    comboAddress, // textField,
-                    buttonObject,
-                    comboDistricts
-                ]
-            }
-            ,
-
+                height: 82,
+                boxMaxHeight: 82,
+                boxMinHeight: 82,
+                bodyStyle: "background-color:#d0ddf1 !important",
+                items: tabPanel
+            },
+            /*
             {
                 region: 'west',
                 id: 'west-panel', // see Ext.getCmp() below
@@ -184,6 +154,7 @@
                 // margins: '0 0 0 5',
                 items: tabPanel
             },
+            */
             new Ext.Panel({
                 region: 'center', // a center region is ALWAYS required for border layout
                 // deferredRender: false,
