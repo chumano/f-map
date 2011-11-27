@@ -150,13 +150,14 @@ function init() {
 
             });
 
-            map.events.register('zoomend', this, function (event) {
-                var x = map.getZoom();
-                //alert(x);
-                if (x > 15) {
-                    map.zoomTo(15);
-                }
-            });
+//            map.events.register('zoomend', this, function (event) {
+//                var x = map.getZoom();
+//                tabPanel.setActiveTab(1);
+//                tabInfo.update("Zoom: "+x);
+//                if (x > 15) {
+//                    map.zoomTo(15);
+//                }
+//            });
 
             /////////////////////////////////////////////////////////////
             getMapView();

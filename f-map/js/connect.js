@@ -39,11 +39,12 @@ function processFeatureInfo(response) {
     eval(myObject);
 
     var str = '';
-    for (var i = 0; i < jSon[0].Attrs.length - 1; i++) {
+    for (var i = 0; i < jSon[0].Attrs.length &&jSon[0].Attrs[i].Name!='SHAPE'; i++) {
         str += jSon[0].Attrs[i].Name + " : " + jSon[0].Attrs[i].Value + '<br/>';
     }
 
     //update info
+    tabPanel.setActiveTab(1);
     tabInfo.update(str);
 
     //UTM2LatLng
@@ -58,7 +59,7 @@ function processFeatureInfo(response) {
     //    var Y1 = utm1.northing;
 
     //get coordinates
-    if (jSon[0].Attrs[jSon[0].Attrs.length - 1].Name == 'sde:Shape') {
+    if (jSon[0].Attrs[jSon[0].Attrs.length - 1].Name == 'SHAPE') {
         var coors = jSon[0].Attrs[jSon[0].Attrs.length - 1].Value.split(' ');
         var pointList = [];
         for (var j = 0; j < coors.length; j++) {
@@ -209,6 +210,9 @@ function changeMapRequest(mid) {
     //clear FeatureVector
     vectorLayer.destroyFeatures();
 
+    tabPanel.setActiveTab(1);
+    tabInfo.update('');
+    //
     mapid = mid;
     var actions = '[{"name":"action","value":"GetMap"},{"name":"map_id","value":' + mapid + '}]';
     getInfo(actions, changeMap);

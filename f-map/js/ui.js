@@ -95,7 +95,7 @@
                 //get map
                 //?action=GetMap&map_id=1
 
-                // moveTo(105.95344, 10.78479, 3);
+                // zoom2Point(105.95344, 10.78479, 3);
                 changeMapRequest(combo.getValue());
 
             }
@@ -135,17 +135,14 @@
         height: 550,
         autoScroll: true
     });
-    
     tabInfo = new Ext.Panel({
         title: 'Thông tin',
-        html: str,
-        autoScroll: true,
-        height: 550
+        html: ''
     });
     tabPanel = new Ext.TabPanel({
         border: false, // already wrapped so don't add another border
-        activeTab: 0,
-        defaults: { autoScroll: true },
+        activeTab: 0, // second tab initially active
+        // tabPosition: 'bottom',
         items: [tabSearchAddress, tabInfo]
     });
 
@@ -182,7 +179,7 @@
                 split: true,
                 width: 300,
                 minSize: 300,
-                maxSize: 400,
+                maxSize: 300,
                 // collapsible: true,
                 // margins: '0 0 0 5',
                 items: tabPanel
@@ -273,7 +270,7 @@ function searchAddress() {
 
             // addPoint(lng, lat);
             searchResults = searchResults
-                + '<span style="cursor:pointer;" onclick="moveTo(' + lng + ',' + lat + ');"><i>'
+                + '<span style="cursor:pointer;" onclick="zoom2PointD(' + lng + ',' + lat + ');"><i>'
                 + "<b>Số nhà </b>" + parsedJSON[i].SoNha + ", <b>Tên đường </b>" + parsedJSON[i].TenDuong + "<br/>"
                 + '</i></span>';
         }
@@ -314,7 +311,7 @@ function addMarker(marker, lng, lat, sonha, tenduong) {
         }
         currentPopup = this.popup;
 
-        // moveTo(lng, lat);
+        // zoom2Point(lng, lat);
 
         OpenLayers.Event.stop(evt);
     });
@@ -322,16 +319,21 @@ function addMarker(marker, lng, lat, sonha, tenduong) {
     markersLayer.addMarker(marker);
 }
 
-function moveTo(lng, lat) {
-    map.setCenter(new OpenLayers.LonLat(lng, lat), defaultCenterZoom);
+function zoom2PointD(lng, lat) {
+    //map.setCenter(new OpenLayers.LonLat(lng, lat), defaultCenterZoom);
+    map.moveTo(new OpenLayers.LonLat(lng, lat), defaultCenterZoom);
 }
 
-function moveTo(lng, lat, zoom) {
-    map.setCenter(new OpenLayers.LonLat(lng, lat), zoom);
+function zoom2Point(lng, lat, zoom) {
+    map.moveTo(new OpenLayers.LonLat(lng, lat), zoom);
 }
 
 ////////////////
 function checkAddress() {
+    if (mapid != 0) {
+        alert('Trở về MAP - Toàn Thành để thực hiện');
+        return;
+    }
     //Clear overlay
     while (markersLayer.markers.length > 0)
         markersLayer.removeMarker(markersLayer.markers[0]);
@@ -369,7 +371,8 @@ function checkAddress() {
                 var marker = new OpenLayers.Marker(point, icon);
 
                 addMarker(marker, ll1.lng, ll1.lat, i + 1, comboAddress.getRawValue());
-                moveTo(ll1.lng, ll1.lat);
+                //zoom2Point(ll1.lng, ll1.lat, defaultCenterZoom);
+                zoom2PointD(ll1.lng, ll1.lat);
             }
         }
         else {
