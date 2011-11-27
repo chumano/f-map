@@ -27,7 +27,6 @@
     <script type='text/javascript' src='js/googleUtils.js'></script>
     <script type="text/javascript">
         function test() {
-            /*
             var url = serverURL + "?action=Test";
             req = getAjax();
 
@@ -39,17 +38,6 @@
             }
             req.open('GET', url, true);
             req.send(null);
-            */
-            testScrollView();
-        }
-
-        function testScrollView() {
-            str = '';
-            for (i = 0; i < 1000; ++i) {
-                str += "message <br />" ;
-            }
-            tabPanel.setActiveTab(1);
-            tabInfo.update(str);
         }
 
         function GoogleMap() {
@@ -88,18 +76,19 @@
 
     <!--------- CENTER ------------->
     <div id="center">
-        <div id="map" style='width: 100%; height: 634px; '>
+        <div id="map" style="width: 100%; height: 634px;">
         </div>
         <div id="wrapper">
             <div id="location" style="position: fixed; bottom: 0px; right: 0px; z-index: 1001">
             </div>
             <div id="scale" style="position: fixed; bottom: 0px; left: 307px; z-index: 1001">
+           
             </div>
         </div>
     </div>
 
     <!----------- FLOATING ------------->
-    <div style="position: fixed; top: 20px; right: 20px; z-index: 1001">
+    <div style="position: fixed; top: 20px; right: 20px; z-index: 1001"
         <input type="button" id="Button1" onclick="GoogleMap()" value="Google" />
         <input type="button" id="show-btn" onclick="test()" value="Test" />
     </div>

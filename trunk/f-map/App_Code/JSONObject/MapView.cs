@@ -10,9 +10,11 @@ public class MapView
 {
     public int ID;
     public string Name;
-	public MapView(int id, string name)
+    public string NoName;
+	public MapView(int id, string name, string nm)
 	{
         ID = id;
         Name = name;
+        NoName = nm;
 	}
 }

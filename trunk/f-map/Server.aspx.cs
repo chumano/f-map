@@ -301,14 +301,14 @@ public partial class Server : System.Web.UI.Page
 
     private void getMapView()
     {
-        string sqlStr = "SELECT ID, Name From MapView Order by ID";
+        string sqlStr = "SELECT ID, Name,NoName From MapView Order by ID";
         DataTable tbl = Helper.GetDataTable(sqlStr);
         if (tbl.Rows.Count > 0)
         {
             List<MapView> list = new List<MapView>();
             foreach (DataRow row in tbl.Rows)
             {
-                MapView view = new MapView(Convert.ToInt32(row[0]), row[1].ToString());
+                MapView view = new MapView(Convert.ToInt32(row[0]), row[1].ToString(), row[2].ToString());
                 
                 list.Add(view);
             }

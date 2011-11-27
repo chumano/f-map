@@ -180,7 +180,7 @@ function getAllStreet() {
             allAddress = [];
             var dataStore = [];
             for (var i = 0; i < jSon.length; i++) {
-                var addr = [i, jSon[i].StreetName + ", " + jSon[i].WardName + ", " + jSon[i].DistrictName];
+                var addr = [i, jSon[i].StreetName + ", " + jSon[i].WardName + ", " + jSon[i].DistrictName] ;
                 dataStore.push(addr);
                 allAddress.push([jSon[i].NoName, jSon[i].IDWard]);
             }
@@ -209,18 +209,29 @@ function getMapView() {
             districts = [];
             for (var i = 0; i < jSon.length; i++) {
                 var row = jSon[i];
-                var arr = [row.ID, row.Name];
+                var num = i + 1;
+                var arr = [row.ID, row.Name,row.NoName];
                 districts.push(arr);
+
             }
 
             var dataStore = new Ext.data.ArrayStore({
-                fields: ['cid', 'district'],
+                fields: ['id', 'district','icon'],
                 data: districts
             });
 
 
             comboDistricts.store = dataStore;
             //alert("here");
+
+            var tpl='<tpl for="."><div class="x-combo-list-item">'
+            + '<table><tbody><tr>'
+            + '<td>'
+            + '<div><img src="images/district_icons/{icon}.png"/></div></td>'
+            + '<td>{district}</td>'
+            + '</tr></tbody></table>'
+            + '</div></tpl>';
+            comboDistricts.tpl = tpl;
 
             ///////////////////////////////
             getAllStreet();
