@@ -20,12 +20,13 @@
     <script type="text/javascript" src="js/ext-base.js"></script>
     <script type="text/javascript" src="js/ext-all-debug.js"></script>
     <%-----------OpenLayers--------------%>
+    <script type='text/javascript' src='openlayers/draw.js'></script>
+    <script type='text/javascript' src='js/googleUtils.js'></script>
     <script type='text/javascript' src='openlayers/OpenLayers.js'></script>
     <script type="text/javascript" src="openlayers/mapinfo.js"></script>
     <script type="text/javascript" src="js/ui.js"></script>
     <script type='text/javascript' src='openlayers/map.js'></script>
-    <script type='text/javascript' src='openlayers/draw.js'></script>
-    <script type='text/javascript' src='js/googleUtils.js'></script>
+    
     <script type="text/javascript">
         function test() {
             var url = serverURL + "?action=Test";
