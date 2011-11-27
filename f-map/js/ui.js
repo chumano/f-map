@@ -85,10 +85,10 @@
             left: 10
         },
         store: new Ext.data.ArrayStore({
-            fields: ['cid', 'district'],
+            fields: ['id', 'district'],
             data: districts
         }),
-        valueField: 'cid',
+        valueField: 'id',
         displayField: 'district',
         listeners: { select: {
             fn: function (combo, value) {
