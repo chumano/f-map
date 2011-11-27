@@ -186,7 +186,7 @@ public partial class Server : System.Web.UI.Page
         if (districtId == "0") return;
 
         string prefix = null;
-        if (int.Parse(districtId) == districtNames.Length - 1)
+        if (int.Parse(districtId) == districtNames.Length)
         {
             prefix = "HUYEN";
         }
@@ -196,7 +196,7 @@ public partial class Server : System.Web.UI.Page
         }
 
         //hardcode
-        DataTable dt = Helper.GetDataTable2("select * from " + prefix + districtNames[int.Parse(districtId)] + "_RG_PROJECT");
+        DataTable dt = Helper.GetDataTable2("select * from " + prefix + districtNames[int.Parse(districtId)-1] + "_RG_PROJECT");
         string[] wards = new string[dt.Rows.Count];
         for (int i = 0; i < dt.Rows.Count; ++i)
         {
@@ -212,7 +212,6 @@ public partial class Server : System.Web.UI.Page
 
     private void SearchAddress(string keyword)
     {
-        // 268 ly thuong kiet
         keyword = NameUtil.GetInstance().Convert(keyword);
         string[] keys = keyword.Split(',');
         string query = null;

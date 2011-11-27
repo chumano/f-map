@@ -360,9 +360,30 @@ namespace Service.WMS
                     XmlNodeList attrNodeList = featureIDNode.ChildNodes;
                     foreach (XmlNode attrNode in attrNodeList)
                     {
-                        if (!attrNode.Name.Contains("the_geom"))
+                        //sde:OBJECTID : 14
+                        //sde:MAHC : 7.7427331E7
+                        //sde:TEN : Phường 14
+                        //sde:CAPHC : Xã
+                        //sde:KIEUHC : Phườn
+                        //sde:SOHO : 4050
+                        if (attrNode.Name.Contains("MAHC"))
                         {
-                            Data dt = new Data(attrNode.Name, attrNode.InnerText);
+                            Data dt = new Data("Mã HC", Convert.ToDouble(attrNode.InnerText).ToString());//.Replace("E7", "").Replace(".", "")
+                            attrs.Add(dt);
+                        }
+                        else if (attrNode.Name.Contains("TEN") )
+                        {
+                            Data dt = new Data("Tên phường/xã", attrNode.InnerText);
+                            attrs.Add(dt);
+                        }
+                        else if (attrNode.Name.Contains("SOHO"))
+                        {
+                            Data dt = new Data("Số hộ dân", attrNode.InnerText);
+                            attrs.Add(dt);
+                        }
+                        else if (attrNode.Name.Contains("Shape"))
+                        {
+                            Data dt = new Data("SHAPE", attrNode.InnerText);
                             attrs.Add(dt);
                         }
                     }
