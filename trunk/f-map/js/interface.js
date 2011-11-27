@@ -141,7 +141,7 @@ Ext.onReady(function () {
     //    infoWin.show();
 
 
-    buttonObject = new Ext.Button({ text: 'Search', height: 40, handler: searchAddress });
+    btnSearchAddress = new Ext.Button({ text: 'Search', height: 40, handler: searchAddress });
     textField = new Ext.form.TextField({ width: 380, height: 40 });
     searchWin = new Ext.Window({
         applyTo: 'search_window',
@@ -151,7 +151,7 @@ Ext.onReady(function () {
         layout: 'hbox',
         labelWidth: 50,
         defaultType: 'field',
-        items: [textField, buttonObject],
+        items: [textField, btnSearchAddress],
         x: 100,
         y: 50
     });

@@ -29,9 +29,12 @@ var textField;
 var tabPanel;
 var tabSearchAddress;
 var tabInfo;
+var tabFindRoute;
 
 var comboDistricts;
 var comboAddress;
+var comboAddressStart;
+var comboAddressEnd;
 
 var menuWin;
 var infoWin;
