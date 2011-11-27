@@ -13,8 +13,8 @@ function init() {
     var options = {
         controls: [],
         //maxExtent: bounds,
-        numZoomLevels: 20,
-        maxResolution: 0.00016796875,
+        numZoomLevels: 10,
+        maxResolution: 0.0009,//0.00016796875,
         projection: "EPSG:4326",
         units: 'degrees'
     };
@@ -48,7 +48,7 @@ function init() {
 
             layers = new OpenLayers.Layer.WMS(
                     "Geoserver layers", hostURL,
-                   { 
+                    {
                         LAYERS: layerNames, //'sde:QUAN1_RG',
                         STYLES: styleNames, //'Quan1_Style',
                         format: format,
@@ -83,9 +83,7 @@ function init() {
                 pointRadius: 6,
                 pointerEvents: "visiblePainted"
             };
-            vectorLayer = new OpenLayers.Layer.Vector("Point Layer"
-
-            );
+            vectorLayer = new OpenLayers.Layer.Vector("Point Layer");
 
             // marker Layer
             markersLayer = new OpenLayers.Layer.Markers("Markers");
@@ -121,6 +119,7 @@ function init() {
 
             //---------------------------------------------------------------------------------------
             map.zoomToExtent(bounds);
+            //map.zoomToMaxExtent();
 
             //add handler
             map.events.register('click', map, function (e) {
@@ -151,6 +150,14 @@ function init() {
 
             });
 
+            map.events.register('zoomend', this, function (event) {
+                var x = map.getZoom();
+                //alert(x);
+                if (x > 15) {
+                    map.zoomTo(15);
+                }
+            });
+
             /////////////////////////////////////////////////////////////
             getMapView();
         }
@@ -170,15 +177,17 @@ function getAllStreet() {
             eval(myObject);
 
             allAddress = [];
+            var dataStore = [];
             for (var i = 0; i < jSon.length; i++) {
-                var addr = [i, jSon[i].NoName + ", " + jSon[i].WardName + ", " + jSon[i].DistrictName];
-                allAddress.push(addr);
+                var addr = [i, jSon[i].StreetName + ", " + jSon[i].WardName + ", " + jSon[i].DistrictName];
+                dataStore.push(addr);
+                allAddress.push([jSon[i].NoName, jSon[i].IDWard]);
             }
-            comboAdrress.store = new Ext.data.SimpleStore({
+            comboAddress.store = new Ext.data.SimpleStore({
                 fields: ['id', 'address'],
-                data: allAddress
+                data: dataStore
             });
-            // comboAdrress.store.filter('address', "a");
+            // comboAddress.store.filter('address', "a");
         }
 
     }

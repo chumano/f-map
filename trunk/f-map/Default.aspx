@@ -88,7 +88,7 @@
 
     <!--------- CENTER ------------->
     <div id="center">
-        <div id="map" style='width: 100%; height: 634px; background-color: #eeffee'>
+        <div id="map" style='width: 100%; height: 634px; '>
         </div>
         <div id="wrapper">
             <div id="location" style="position: fixed; bottom: 0px; right: 0px; z-index: 1001">
@@ -110,5 +110,6 @@
     </div>
     <div id="winwards" class="x-hidden">
     </div>
+
 </body>
 </html>
