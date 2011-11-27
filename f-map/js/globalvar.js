@@ -22,10 +22,6 @@ var allAddress;
 var districts;  //danh sach cac mapview hien tai -- json
 
 //--------UI----------
-var menuWin;
-var infoWin;
-var wardsWin;
-
 var labelInfo;
 var searchWin;
 var textField;
@@ -35,4 +31,8 @@ var tabSearchAddress;
 var tabInfo;
 
 var comboDistricts;
-var comboAdrress;
+var comboAddress;
+
+var menuWin;
+var infoWin;
+var wardsWin;

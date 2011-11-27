@@ -1,7 +1,7 @@
 ﻿Ext.onReady(function () {
     Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
-    comboAdrress = new Ext.form.ComboBox({
+    comboAddress = new Ext.form.ComboBox({
         width: 600,
         height: 32,
         /*typeAhead: true,*/
@@ -37,7 +37,7 @@
     });
 
     sonha = '';
-    comboAdrress.on('beforequery', function (q) {
+    comboAddress.on('beforequery', function (q) {
         index = 0;
         query = q.query;
         for (; index < query.length; ++index) {
@@ -63,7 +63,7 @@
         }
     });
 
-    comboAdrress.on('beforeselect', function (combox, record, index) {
+    comboAddress.on('beforeselect', function (combox, record, index) {
         record.data.address = sonha + ' ' + record.data.address;
         return true;
     });
@@ -114,7 +114,7 @@
             bottom: 10,
             left: 5
         },
-        handler: searchAddress,
+        handler: checkAddress, //searchAddress,
         icon: "images/icon_search.png"
     });
     textField = new Ext.form.TextField({
@@ -168,7 +168,7 @@
                 boxMinHeight: 42,
                 bodyStyle: "background-color:#133783 !important",
                 items: [
-                    comboAdrress, // textField,
+                    comboAddress, // textField,
                     buttonObject,
                     comboDistricts
                 ]
@@ -204,6 +204,7 @@
         w.collapsed ? w.expand() : w.collapse();
     });
 });
+
 
 function searchAddress() {
     if (textField.getValue().trim() == '') {
@@ -327,4 +328,52 @@ function moveTo(lng, lat) {
 
 function moveTo(lng, lat, zoom) {
     map.setCenter(new OpenLayers.LonLat(lng, lat), zoom);
+}
+
+////////////////
+function checkAddress() {
+    //Clear overlay
+    while (markersLayer.markers.length > 0)
+        markersLayer.removeMarker(markersLayer.markers[0]);
+    ////////////////////
+    var stt = comboAddress.getValue();
+    var noname = allAddress[stt][0];
+    var idward = allAddress[stt][1];
+
+
+    var addressStr = comboAddress.getRawValue();
+    var part = addressStr.split(' ');
+
+    //part[0] is So Nha
+    var actions = '[{"name":"action","value":"SearchAddress"},'
+                    + '{"name":"NoAdd","value":' + part[0] + '},'
+                    + '{"name":"StrNoName","value":"' + noname + '"},'
+                    + '{"name":"IDWard","value":"' + idward + '"}'
+                    + ']';
+    //action=SearchAddress&NoAdd=123&StrNoName=y thai to&IDWard='p1
+    getInfo(actions, function (response) {
+        var jSon;
+        var myObject = "jSon=" + response;
+        eval(myObject);
+
+        if (jSon.Found) {
+            for (var i = 0; i < jSon.Points.length; i++) {
+                var utm1 = new UTMRef(jSon.Points[i].X, jSon.Points[i].Y, "N", 48);
+                var ll1 = utm1.toLatLng();
+                var point = new OpenLayers.LonLat(ll1.lng, ll1.lat);
+
+                var number = i + 1;
+                var size = new OpenLayers.Size(32, 37);
+                var offset = new OpenLayers.Pixel(-(size.w / 2), -size.h);
+                var icon = new OpenLayers.Icon('./images/markers/number_' + number + '.png', size, offset);
+                var marker = new OpenLayers.Marker(point, icon);
+
+                addMarker(marker, ll1.lng, ll1.lat, i + 1, comboAddress.getRawValue());
+                moveTo(ll1.lng, ll1.lat);
+            }
+        }
+        else {
+            alert("Không tìm thấy");
+        }
+    });
 }
