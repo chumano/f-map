@@ -23,7 +23,6 @@ function findRoute(start, end) {
 //            tabInfo.update(rslt[1]);
         }
     });
-
 }
 
 function parseRouteResponse2Points(directionResult) {
@@ -69,5 +68,4 @@ function googleFindRoute() {
     else {
         alert("Không đủ thông tin");
     }
-    
 }
