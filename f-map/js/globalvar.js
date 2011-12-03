@@ -21,16 +21,28 @@ var currentPopup;
 var allAddress;
 var districts;  //danh sach cac mapview hien tai -- json
 
+var startPoint = [];//lng,lat
+var endPoint = [];
+
+var currentPoint = [];
+
+var startMarker;
+var endMarker;
+var currentMarker;
 //--------UI----------
 var labelInfo;
 var searchWin;
 var textField;
+
+/////////////////
+var nowTab; //0 , 1, 2
 
 var tabPanel;
 var tabSearchAddress;
 var tabInfo;
 var tabFindRoute;
 
+///////////////
 var comboDistricts;
 var comboAddress;
 var comboAddressStart;

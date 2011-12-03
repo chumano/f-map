@@ -1,6 +1,7 @@
 ﻿//start = new google.maps.LatLng(lat,lng)
 function findRoute(start, end) {
-    
+    mask = new Ext.LoadMask(Ext.getBody(), { msg: "Đang tải..." });
+    mask.show();
 
     var request = {
         origin: start,
@@ -17,9 +18,9 @@ function findRoute(start, end) {
             var rslt = parseRouteResponse2Points(response);
 
             drawLineFromPoints(rslt[0]);
-
-            tabPanel.setActiveTab(1);
-            tabInfo.update(rslt[1]);
+            mask.hide();
+//            tabPanel.setActiveTab(1);
+//            tabInfo.update(rslt[1]);
         }
     });
 
@@ -50,5 +51,23 @@ function parseRouteResponse2Points(directionResult) {
         instructions += myRoute.steps[i].instructions + '<br/>';
     }
 
+    var NE = directionResult.routes[0].bounds.getNorthEast();
+    var SW = directionResult.routes[0].bounds.getSouthWest();
+    var minX = SW.lng(); var minY = SW.lat();
+    var maxX = NE.lng(); var maxY = NE.lat();
+    var bounds = new OpenLayers.Bounds(minX, minY, maxX, maxY);
+    map.zoomToExtent(bounds);
     return [points,instructions];
+}
+
+function googleFindRoute() {
+    if (startMarker && endMarker) {
+        var start = new google.maps.LatLng(startMarker.lonlat.lat, startMarker.lonlat.lon); //lat, lng
+        var end = new google.maps.LatLng(endMarker.lonlat.lat, endMarker.lonlat.lon);
+        findRoute(start, end);
+    }
+    else {
+        alert("Không đủ thông tin");
+    }
+    
 }

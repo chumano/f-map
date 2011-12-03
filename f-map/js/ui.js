@@ -33,8 +33,6 @@
             fn: function (combo, value) {
                 //get map
                 //?action=GetMap&map_id=1
-
-                // zoom2Point(105.95344, 10.78479, 3);
                 changeMapRequest(combo.getValue());
 
             }
@@ -53,7 +51,7 @@
             bottom: 15,
             left: 5
         },
-        handler: checkAddress, //searchAddress,
+        handler: function () { checkAddress(comboAddress, 0); }, //searchAddress,
         icon: "images/icon_search.png"
     });
     textField = new Ext.form.TextField({
@@ -77,7 +75,7 @@
         boxMaxHeight: 42,
         boxMinHeight: 42,
         */
-        bodyStyle: "background-color:#d0ddf1 !important",
+        bodyStyle: "background-color:#d0ddf1 !important"
     });
     tabInfo = new Ext.Panel({
         title: 'Quản lý',
@@ -85,17 +83,28 @@
         layout: 'hbox',
         bodyStyle: "background-color:#d0ddf1 !important"
     });
-
+    ///////////////////////////////////////////////////////
     comboAddressStart = createAutoCompleteAddressCombobox(
         400,
         15, 5, 15, 100,  // top, right, bottom, left
         'Địa chỉ bắt đầu'
     );
+
+    comboAddressStart.on('select', function (combo, value) {
+        checkAddress(combo, 1);
+    });
+
     comboAddressEnd = createAutoCompleteAddressCombobox(
         400,
         15, 5, 15, 10,  // top, right, bottom, left
         'Địa chỉ kết thúc'
     );
+
+    comboAddressEnd.on('select', function (combo, value) {
+        checkAddress(combo, 2);
+    });
+
+    //////////////////////////////////////////////
     btnFindRoute = new Ext.Button({
         text: 'Tìm đường',
         height: 22,
@@ -112,14 +121,50 @@
         title: 'Tìm đường đi',
         layout: 'hbox',
         items: [comboAddressStart, comboAddressEnd, btnFindRoute],
-        bodyStyle: "background-color:#d0ddf1 !important",
+        bodyStyle: "background-color:#d0ddf1 !important"
     });
 
     tabPanel = new Ext.TabPanel({
         border: false, // already wrapped so don't add another border
-        activeTab: 0   , // second tab initially active
+        activeTab: 0, // second tab initially active
         // tabPosition: 'bottom',
         items: [tabSearchAddress, tabRoute, tabInfo]
+    });
+
+    nowTab = tabSearchAddress;
+    tabPanel.on('tabchange', function (tabPanel, tab) {
+        if (nowTab == tabSearchAddress) {
+            //co the co marker Current
+            if (currentMarker) currentMarker.destroy();
+            currentMarker = null;
+            if (nowTab == tabRoute) {
+            } else { //tabInfo
+
+            }
+        } else if (nowTab == tabRoute) {
+            //co the co marker start and end
+            if (startMarker) startMarker.destroy();
+            if (endMarker) endMarker.destroy();
+            startMarker = null;
+            endMarker = null;
+            vectorLayer.destroyFeatures();
+
+            if (nowTab == tabSearchAddress) {
+
+
+            } else { //tabInfo
+
+            }
+        } else {
+            if (mapid != 0) {
+                //doi lai map ToanThanh
+                comboDistricts.setValue(0);
+                changeMapRequest(0);
+            }
+
+        }
+
+        nowTab = tabPanel.activeTab;
     });
 
     //////////////////////////////////////////////////////////////
@@ -141,20 +186,20 @@
                 bodyStyle: "background-color:#d0ddf1 !important",
                 items: tabPanel
             },
-            /*
-            {
-                region: 'west',
-                id: 'west-panel', // see Ext.getCmp() below
-                // title: 'Kết quả tìm kiếm',
-                split: true,
-                width: 300,
-                minSize: 300,
-                maxSize: 300,
-                // collapsible: true,
-                // margins: '0 0 0 5',
-                items: tabPanel
-            },
-            */
+        /*
+        {
+        region: 'west',
+        id: 'west-panel', // see Ext.getCmp() below
+        // title: 'Kết quả tìm kiếm',
+        split: true,
+        width: 300,
+        minSize: 300,
+        maxSize: 300,
+        // collapsible: true,
+        // margins: '0 0 0 5',
+        items: tabPanel
+        },
+        */
             new Ext.Panel({
                 region: 'center', // a center region is ALWAYS required for border layout
                 // deferredRender: false,
@@ -284,7 +329,7 @@ function addMarker(marker, lng, lat, sonha, tenduong) {
 
         // zoom2Point(lng, lat);
 
-        OpenLayers.Event.stop(evt);
+        //OpenLayers.Event.stop(evt);
     });
 
     markersLayer.addMarker(marker);
@@ -300,21 +345,36 @@ function zoom2Point(lng, lat, zoom) {
 }
 
 ////////////////
-function checkAddress() {
+function checkAddress(combobox, kind) {
     if (mapid != 0) {
         alert('Trở về MAP - Toàn Thành để thực hiện');
         return;
     }
+
+    if (kind == 0) {
+        if (currentMarker) currentMarker.destroy();
+        currentMarker = null;
+    } else if(kind == 1) {
+        if (startMarker) startMarker.destroy();
+        vectorLayer.destroyFeatures();
+        startMarker = null;
+    } else {
+        if (endMarker) endMarker.destroy();
+        vectorLayer.destroyFeatures();
+        endMarker = null;
+    } 
+     
+
     //Clear overlay
-    while (markersLayer.markers.length > 0)
-        markersLayer.removeMarker(markersLayer.markers[0]);
+    //while (markersLayer.markers.length > 0)
+    //    markersLayer.removeMarker(markersLayer.markers[0]);
     ////////////////////
-    var stt = comboAddress.getValue();
+    var stt = combobox.getValue();
     var noname = allAddress[stt][0];
     var idward = allAddress[stt][1];
 
 
-    var addressStr = comboAddress.getRawValue();
+    var addressStr = combobox.getRawValue();
     var part = addressStr.split(' ');
 
     //part[0] is So Nha
@@ -338,10 +398,24 @@ function checkAddress() {
                 var number = i + 1;
                 var size = new OpenLayers.Size(32, 37);
                 var offset = new OpenLayers.Pixel(-(size.w / 2), -size.h);
-                var icon = new OpenLayers.Icon('./images/markers/number_' + number + '.png', size, offset);
-                var marker = new OpenLayers.Marker(point, icon);
 
-                addMarker(marker, ll1.lng, ll1.lat, i + 1, comboAddress.getRawValue());
+                var marker;
+                if (kind == 0) {
+                    var icon = new OpenLayers.Icon('./images/markers/number_' + number + '.png', size, offset);
+                    marker = new OpenLayers.Marker(point, icon);
+                    currentMarker = marker;
+                } else if (kind == 1) {
+                    var icon = new OpenLayers.Icon('./images/markers/letter_b.png', size, offset);
+                    marker = new OpenLayers.Marker(point, icon);
+                    startMarker = marker;
+                } else {
+                    var icon = new OpenLayers.Icon('./images/markers/letter_e.png', size, offset);
+                    marker = new OpenLayers.Marker(point, icon);
+                    endMarker = marker;
+                }
+
+                // addMarker(marker, ll1.lng, ll1.lat, i + 1, combobox.getRawValue());
+                markersLayer.addMarker(marker);
                 //zoom2Point(ll1.lng, ll1.lat, defaultCenterZoom);
                 zoom2PointD(ll1.lng, ll1.lat);
             }
