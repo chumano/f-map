@@ -57,7 +57,7 @@ function init() {
                         tilesOrigin: map.maxExtent.left + ',' + map.maxExtent.bottom
                     },
                     {
-                        buffer: 0,
+                        buffer: 2,
                         displayOutsideMaxExtent: true,
                         isBaseLayer: true
 
@@ -105,12 +105,20 @@ function init() {
             map.addControl(new OpenLayers.Control.DrawFeature(vectorLayer, OpenLayers.Handler.Point));
 
             //PanZoom Control-1
-            map.addControl(new OpenLayers.Control.PanZoomBar({
-                position: new OpenLayers.Pixel(2, 15)
-            }));
+            //map.addControl(new OpenLayers.Control.PanZoomBar({ div: OpenLayers.Util.getElement('panZoomCont') }));
+            map.addControl(new OpenLayers.Control.PanZoomBar());
+            //
+            document.getElementById('panZoomCont').style.left = "";
+            document.getElementById('panZoomCont').style.right = "45px";
+            document.getElementById('panZoomCont').style.top = "125px";
+
+
             //Navigation Control-2
             map.addControl(new OpenLayers.Control.Navigation());
 
+            map.addControl(new OpenLayers.Control.ScaleLine());
+
+            map.addControl(new OpenLayers.Control.OverviewMap());
             //Scale Control-3
             map.addControl(new OpenLayers.Control.Scale($('scale')));
 
@@ -150,14 +158,14 @@ function init() {
 
             });
 
-//            map.events.register('zoomend', this, function (event) {
-//                var x = map.getZoom();
-//                tabPanel.setActiveTab(1);
-//                tabInfo.update("Zoom: "+x);
-//                if (x > 15) {
-//                    map.zoomTo(15);
-//                }
-//            });
+            //            map.events.register('zoomend', this, function (event) {
+            //                var x = map.getZoom();
+            //                tabPanel.setActiveTab(1);
+            //                tabInfo.update("Zoom: "+x);
+            //                if (x > 15) {
+            //                    map.zoomTo(15);
+            //                }
+            //            });
 
             /////////////////////////////////////////////////////////////
             getMapView();
@@ -173,14 +181,14 @@ function getAllStreet() {
     req = getAjax();
     req.onreadystatechange = function () {
         if (req.readyState == 4 && req.status == 200) {
-            var jSon
+            var jSon;
             var myObject = "jSon=" + req.responseText;
             eval(myObject);
 
             allAddress = [];
             var dataStore = [];
             for (var i = 0; i < jSon.length; i++) {
-                var addr = [i, jSon[i].StreetName + ", " + jSon[i].WardName + ", " + jSon[i].DistrictName] ;
+                var addr = [i, jSon[i].StreetName + ", " + jSon[i].WardName + ", " + jSon[i].DistrictName];
                 dataStore.push(addr);
                 allAddress.push([jSon[i].NoName, jSon[i].IDWard]);
             }

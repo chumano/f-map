@@ -17,14 +17,8 @@
         mode: 'local',
         // valueNotFoundText: 'Không có địa chỉ này',
         valueField: 'id',
-        displayField: 'address',
-        listeners: {
-            'select': {
-                fn: function (combo, value) {
-                    // alert(value.data.id);
-                }
-            }
-        }
+        displayField: 'address'
+        
     });
 
     sonha = '';
