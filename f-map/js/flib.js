@@ -1,4 +1,5 @@
-﻿//actions is an array : [{"name":attrName1,"value":attrValue1},{"name":attrName2,"value":attrValue2}]
+﻿// convert an array of parameters to string
+// actions is an array : [{"name":attrName1,"value":attrValue1},{"name":attrName2,"value":attrValue2}]
 function para2Str(actions) {
     if (actions == '') return '';
 
@@ -17,6 +18,7 @@ function para2Str(actions) {
     return resultStr;
 }
 
+// convert a string in JSON format to array
 function str2Arr(str) {
     var jSon;
     var myObject = "jSon=" + str;
@@ -39,4 +41,3 @@ function str2Arr(str) {
 function change2Str(value) {
     return '"' + value + '"';
 }
-

@@ -1,43 +1,39 @@
-﻿// pink tile avoidance
+﻿// TODO:
+// pink tile avoidance
 OpenLayers.IMAGE_RELOAD_ATTEMPTS = 5;
 // make OL compute scale according to WMS spec
 OpenLayers.DOTS_PER_INCH = 25.4 / 0.28;
 
 function init() {
-
-
-    var bounds = new OpenLayers.Bounds(
-                    105.93, 10.758,
-                    105.961, 10.801
-                );
+    var bounds = new OpenLayers.Bounds(105.93, 10.758, 105.961, 10.801);
     var options = {
         controls: [],
-        //maxExtent: bounds,
         numZoomLevels: 10,
         maxResolution: 0.0009,//0.00016796875,
         projection: "EPSG:4326",
         units: 'degrees'
     };
-    //Default map is Quan 1 : mapid=1
+	
+    // Default map is 0 which means all districts
     mapid = 0;
-    //?action=GetMap&map_id=1
+	
+    // ?action=GetMap&map_id=1
     var actions = '[{"name":"action","value":"GetMap"},{"name":"map_id","value":' + mapid + '}]';
     getInfo(actions,
         function (response) {
             var jSon;
             var myObject = "jSon=" + response;
             eval(myObject);
+			
             //lay bound de tao options
-            bounds = new OpenLayers.Bounds(
-                    jSon.bound.MinX, jSon.bound.MinY, jSon.bound.MaxX, jSon.bound.MaxY
-                );
+            bounds = new OpenLayers.Bounds(jSon.bound.MinX, jSon.bound.MinY, jSon.bound.MaxX, jSon.bound.MaxY);
 
             options.maxExtent = bounds;
 
             //tao map
             map = new OpenLayers.Map('map', options);
 
-            //---------------------Build up cac layers--------------------------------
+            // Build up layers
             // basic layers 
             var layerNames = '', styleNames = '';
             for (var i = 0; i < jSon.layers.length; i++) {
@@ -47,7 +43,8 @@ function init() {
             }
 
             layers = new OpenLayers.Layer.WMS(
-                    "Geoserver layers", hostURL,
+                    "Geoserver layers", 
+					hostURL,
                     {
                         LAYERS: layerNames, //'sde:QUAN1_RG',
                         STYLES: styleNames, //'Quan1_Style',
@@ -60,17 +57,20 @@ function init() {
                         buffer: 2,
                         displayOutsideMaxExtent: true,
                         isBaseLayer: true
-
                     }
             );
 
-            //google layer
+            // Google layer
             gmap = new OpenLayers.Layer.Google(
                 "Google Streets", // the default
-                {numZoomLevels: 20,
-                projection: "EPSG:900913"
-
-            }
+                {
+					numZoomLevels: 20,
+					projection: new OpenLayers.Projection("EPSG:900913"),
+					displayProjection: new OpenLayers.Projection("EPSG:4326")
+				}, 
+				{ 
+					isBaseLayer: false 
+				}
             );
 
             // layer for points
@@ -88,48 +88,107 @@ function init() {
             // marker Layer
             markersLayer = new OpenLayers.Layer.Markers("Markers");
 
-            // Selected Layer
-            selectedLayer = new OpenLayers.Layer.Vector("Selection", { styleMap:
-                new OpenLayers.Style(OpenLayers.Feature.Vector.style["select"])
-            });
-            var hover = new OpenLayers.Layer.Vector("Hover");
+            // add all layers
+            map.addLayers([layers, vectorLayer, markersLayer]);
 
-            // -----add all Layers----
-            map.addLayers([layers, vectorLayer, selectedLayer, hover, markersLayer]);
+            // Switcher Control
+            // map.addControl(new OpenLayers.Control.LayerSwitcher());
 
-            //-------------------------------build up all controls---------------------------------- 
-            //Switcher Control
-            //map.addControl(new OpenLayers.Control.LayerSwitcher());
-
-            //Draw feature Control-0
-            map.addControl(new OpenLayers.Control.DrawFeature(vectorLayer, OpenLayers.Handler.Point));
-
-            //PanZoom Control-1
-            //map.addControl(new OpenLayers.Control.PanZoomBar({ div: OpenLayers.Util.getElement('panZoomCont') }));
+			// add controls to map
             map.addControl(new OpenLayers.Control.PanZoomBar());
-            //
-            document.getElementById('panZoomCont').style.left = "";
-            document.getElementById('panZoomCont').style.right = "45px";
-            document.getElementById('panZoomCont').style.top = "125px";
-
-
-            //Navigation Control-2
             map.addControl(new OpenLayers.Control.Navigation());
-
             map.addControl(new OpenLayers.Control.ScaleLine());
-
             map.addControl(new OpenLayers.Control.OverviewMap());
-            //Scale Control-3
             map.addControl(new OpenLayers.Control.Scale($('scale')));
-
-            //Mouse position Control-4
             map.addControl(new OpenLayers.Control.MousePosition({ element: $('location') }));
+
+            // TODO add edit map panel
+            /*
+            var DeleteFeature = OpenLayers.Class(OpenLayers.Control, {
+                initialize: function (layer, options) {
+                    OpenLayers.Control.prototype.initialize.apply(this, [options]);
+                    this.layer = layer;
+                    this.handler = new OpenLayers.Handler.Feature(
+                    this, layer, { click: this.clickFeature }
+                );
+                },
+                clickFeature: function (feature) {
+                    // if feature doesn't have a fid, destroy it
+                    if (feature.fid == undefined) {
+                        this.layer.destroyFeatures([feature]);
+                    } else {
+                        feature.state = OpenLayers.State.DELETE;
+                        this.layer.events.triggerEvent("afterfeaturemodified",
+                                                   { feature: feature });
+                        feature.renderIntent = "select";
+                        this.layer.drawFeature(feature);
+                    }
+                },
+                setMap: function (map) {
+                    this.handler.setMap(map);
+                    OpenLayers.Control.prototype.setMap.apply(this, arguments);
+                },
+                CLASS_NAME: "OpenLayers.Control.DeleteFeature"
+            });
+            var saveStrategy = new OpenLayers.Strategy.Save();
+            saveStrategy.activate();
+
+            wfs = new OpenLayers.Layer.Vector("Editable Features", {
+                strategies: [new OpenLayers.Strategy.BBOX(), saveStrategy],
+                projection: new OpenLayers.Projection("EPSG:4326"),
+                protocol: new OpenLayers.Protocol.WFS({
+                    version: "1.1.0",
+                    srsName: "EPSG:4326",
+                    url: "http://demo.opengeo.org/geoserver/wfs",
+                    featureNS: "http://opengeo.org",
+                    featureType: "restricted",
+                    geometryName: "the_geom",
+                    schema: "http://demo.opengeo.org/geoserver/wfs/DescribeFeatureType?version=1.1.0&typename=og:restricted"
+                })
+            });
+
+            map.addLayers([wfs]);
+
+            var panel = new OpenLayers.Control.Panel({
+                displayClass: 'customEditingToolbar',
+                allowDepress: true
+            });
+
+            var draw = new OpenLayers.Control.DrawFeature(
+                wfs, OpenLayers.Handler.Polygon,
+                {
+                    title: "Draw Feature",
+                    displayClass: "olControlDrawFeaturePolygon",
+                    multi: true
+                }
+            );
+
+            var edit = new OpenLayers.Control.ModifyFeature(wfs, {
+                title: "Modify Feature",
+                displayClass: "olControlModifyFeature"
+            });
+
+            var del = new DeleteFeature(wfs, { title: "Delete Feature" });
+
+            var save = new OpenLayers.Control.Button({
+                title: "Save Changes",
+                trigger: function () {
+                    if (edit.feature) {
+                    edit.selectControl.unselectAll();
+                    }
+                    saveStrategy.save();
+                },
+                displayClass: "olControlSaveFeatures"
+            });
+
+            panel.addControls([save, del, edit, draw]);
+            map.addControl(panel);
+            */
 
             //---------------------------------------------------------------------------------------
             map.zoomToExtent(bounds);
-            //map.zoomToMaxExtent();
 
-            //add handler
+            // handle map click event
             map.events.register('click', map, function (e) {
                 //BBOX: map.getExtent().toBBOX(),
                 //X: e.xy.x,
@@ -155,27 +214,25 @@ function init() {
                                     + ',{"name":"height","value":' + h + '}'
                                     + ']';
                 getInfoWhenClickOnMap(actions, processFeatureInfo);
-
             });
 
-            //            map.events.register('zoomend', this, function (event) {
-            //                var x = map.getZoom();
-            //                tabPanel.setActiveTab(1);
-            //                tabInfo.update("Zoom: "+x);
-            //                if (x > 15) {
-            //                    map.zoomTo(15);
-            //                }
-            //            });
+			// map.events.register('zoomend', this, function (event) {
+				// var x = map.getZoom();
+				// tabPanel.setActiveTab(1);
+				// tabInfo.update("Zoom: "+x);
+				// if (x > 15) {
+				   // map.zoomTo(15);
+				// }
+			// });
 
-            /////////////////////////////////////////////////////////////
+            // get all districts
             getMapView();
         }
     );
-
-
 }
 
-
+// TODO: change to getInfo(actions)
+// get all street names
 function getAllStreet() {
     url = 'Server.aspx?action=GetAllStreet';
     req = getAjax();
@@ -204,16 +261,15 @@ function getAllStreet() {
                 fields: ['id', 'address'],
                 data: dataStore
             })
-
-            // comboAddress.clearValue();
         }
-
     }
 
     req.open('GET', url, true);
     req.send(null);
 }
 
+// get all districts 
+// TODO: change to getInfo(actions)
 function getMapView() {
     url = 'Server.aspx?action=GetMapView';
     req = getAjax();
@@ -226,7 +282,7 @@ function getMapView() {
             districts = [];
             for (var i = 0; i < jSon.length; i++) {
                 var row = jSon[i];
-                var arr = [row.ID, /*'<img src="images/icon_search.png" width="100" height="100" />' + */row.Name];
+                var arr = [row.ID, row.Name];
                 var num = i + 1;
                 var arr = [row.ID, row.Name,row.NoName];
                 districts.push(arr);
@@ -237,9 +293,7 @@ function getMapView() {
                 data: districts
             });
 
-
             comboDistricts.store = dataStore;
-            //alert("here");
 
             var tpl='<tpl for="."><div class="x-combo-list-item">'
             + '<table><tbody><tr>'

@@ -1,48 +1,14 @@
 ﻿Ext.onReady(function () {
     Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
+	// Search address
     comboAddress = createAutoCompleteAddressCombobox(
         600,
         15, 5, 15, 305,  // top, right, bottom, left
         'Nhập địa chỉ bạn muốn tìm'
     );
-
-    comboDistricts = new Ext.form.ComboBox({
-        width: 600,
-        typeAhead: true,
-        maxHeight: 200,
-        //hideTrigger:true, //use to hide nut so xuong
-        triggerAction: 'all',
-        lazyRender: true,
-        mode: 'local',
-        id: 'combo-district',
-        valueNotFoundText: 'Không có',
-        margins: {
-            top: 15,
-            right: 5,
-            bottom: 15,
-            left: 305
-        },
-        store: new Ext.data.ArrayStore({
-            fields: ['id', 'district'],
-            data: districts
-        }),
-        valueField: 'id',
-        displayField: 'district',
-        listeners: { select: {
-            fn: function (combo, value) {
-                //get map
-                //?action=GetMap&map_id=1
-                changeMapRequest(combo.getValue());
-
-            }
-        }
-        }
-    });
-
-    comboDistricts.setValue(0);
-
-    btnSearchAddress = new Ext.Button({
+	
+	btnSearchAddress = new Ext.Button({
         text: 'Tìm kiếm',
         height: 22,
         margins: {
@@ -51,40 +17,13 @@
             bottom: 15,
             left: 5
         },
-        handler: function () { checkAddress(comboAddress, 0); }, //searchAddress,
+        handler: function () { checkAddress(comboAddress, 0); },
         icon: "images/icon_search.png"
     });
-    textField = new Ext.form.TextField({
-        width: 600,
-        height: 32,
-        margins: {
-            top: 5,
-            right: 5,
-            bottom: 10,
-            left: 305
-        }
-    });
-
-    // Tabs
-    tabSearchAddress = new Ext.Panel({
-        title: '                    Tìm địa chỉ',
-        height: 100,
-        layout: 'hbox',
-        items: [comboAddress, btnSearchAddress],
-        /*
-        boxMaxHeight: 42,
-        boxMinHeight: 42,
-        */
-        bodyStyle: "background-color:#d0ddf1 !important"
-    });
-    tabInfo = new Ext.Panel({
-        title: 'Quản lý',
-        items: comboDistricts,
-        layout: 'hbox',
-        bodyStyle: "background-color:#d0ddf1 !important"
-    });
-    ///////////////////////////////////////////////////////
-    comboAddressStart = createAutoCompleteAddressCombobox(
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	
+	// Find route
+	comboAddressStart = createAutoCompleteAddressCombobox(
         400,
         15, 5, 15, 100,  // top, right, bottom, left
         'Địa chỉ bắt đầu'
@@ -103,9 +42,8 @@
     comboAddressEnd.on('select', function (combo, value) {
         checkAddress(combo, 2);
     });
-
-    //////////////////////////////////////////////
-    btnFindRoute = new Ext.Button({
+	
+	btnFindRoute = new Ext.Button({
         text: 'Tìm đường',
         height: 22,
         margins: {
@@ -114,9 +52,62 @@
             bottom: 15,
             left: 10
         },
-        handler: googleFindRoute, //searchAddress,
+        handler: googleFindRoute,
         icon: "images/icon_search.png"
     });
+	///////////////////////////////////////////////////////////////////////////////////////////////
+
+	// District info
+    comboDistricts = new Ext.form.ComboBox({
+        width: 600,
+        typeAhead: true,
+        maxHeight: 200,
+        triggerAction: 'all',
+        lazyRender: true,
+        mode: 'local',
+        id: 'combo-district',
+        valueNotFoundText: 'Không có',
+        margins: {
+            top: 15,
+            right: 5,
+            bottom: 15,
+            left: 305
+        },
+        store: new Ext.data.ArrayStore({
+            fields: ['id', 'district'],
+            data: districts
+        }),
+        valueField: 'id',
+        displayField: 'district',
+        listeners: { 
+			select: {
+				fn: function (combo, value) {
+					//get map
+					//?action=GetMap&map_id=1
+					changeMapRequest(combo.getValue());
+				}
+			}
+        }
+    });
+    comboDistricts.setValue(0);
+	///////////////////////////////////////////////////////////////////////////////////////////////
+    
+	// Tabs
+    tabSearchAddress = new Ext.Panel({
+        title: 'Tìm địa chỉ',
+        height: 100,
+        layout: 'hbox',
+        items: [comboAddress, btnSearchAddress],
+        bodyStyle: "background-color:#d0ddf1 !important"
+    });
+	
+    tabInfo = new Ext.Panel({
+        title: 'Quản lý',
+        items: comboDistricts,
+        layout: 'hbox',
+        bodyStyle: "background-color:#d0ddf1 !important"
+    });
+	
     tabRoute = new Ext.Panel({
         title: 'Tìm đường đi',
         layout: 'hbox',
@@ -133,41 +124,11 @@
 
     nowTab = tabSearchAddress;
     tabPanel.on('tabchange', function (tabPanel, tab) {
-        if (nowTab == tabSearchAddress) {
-            //co the co marker Current
-            if (currentMarker) currentMarker.destroy();
-            currentMarker = null;
-            if (nowTab == tabRoute) {
-            } else { //tabInfo
-
-            }
-        } else if (nowTab == tabRoute) {
-            //co the co marker start and end
-            if (startMarker) startMarker.destroy();
-            if (endMarker) endMarker.destroy();
-            startMarker = null;
-            endMarker = null;
-            vectorLayer.destroyFeatures();
-
-            if (nowTab == tabSearchAddress) {
-
-
-            } else { //tabInfo
-
-            }
-        } else {
-            if (mapid != 0) {
-                //doi lai map ToanThanh
-                comboDistricts.setValue(0);
-                changeMapRequest(0);
-            }
-
-        }
-
-        nowTab = tabPanel.activeTab;
+		onTabChange(tabPanel, tab);
     });
-
-    //////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	
+	// Main view port
     var viewport = new Ext.Viewport({
         layout: {
             type: 'border',
@@ -186,20 +147,6 @@
                 bodyStyle: "background-color:#d0ddf1 !important",
                 items: tabPanel
             },
-        /*
-        {
-        region: 'west',
-        id: 'west-panel', // see Ext.getCmp() below
-        // title: 'Kết quả tìm kiếm',
-        split: true,
-        width: 300,
-        minSize: 300,
-        maxSize: 300,
-        // collapsible: true,
-        // margins: '0 0 0 5',
-        items: tabPanel
-        },
-        */
             new Ext.Panel({
                 region: 'center', // a center region is ALWAYS required for border layout
                 // deferredRender: false,
@@ -209,15 +156,42 @@
             })
         ]
     });
-    // get a reference to the HTML element with id "hideit" and add a click listener to it 
-    Ext.get("hideit").on('click', function () {
-        // get a reference to the Panel that was created wit0h id = 'west-panel' 
-        var w = Ext.getCmp('west-panel');
-        // expand or collapse that Panel based on its collapsed property state
-        w.collapsed ? w.expand() : w.collapse();
-    });
+	///////////////////////////////////////////////////////////////////////////////////////////////
 });
 
+function onTabChange(tabPanel, tab) {
+	if (nowTab == tabSearchAddress) {
+		//co the co marker Current
+		if (currentMarker) currentMarker.destroy();
+		currentMarker = null;
+		if (nowTab == tabRoute) {
+		} else { //tabInfo
+
+		}
+	} else if (nowTab == tabRoute) {
+		//co the co marker start and end
+		if (startMarker) startMarker.destroy();
+		if (endMarker) endMarker.destroy();
+		startMarker = null;
+		endMarker = null;
+		vectorLayer.destroyFeatures();
+
+		if (nowTab == tabSearchAddress) {
+
+
+		} else { //tabInfo
+
+		}
+	} else {
+		if (mapid != 0) {
+			//doi lai map ToanThanh
+			comboDistricts.setValue(0);
+			changeMapRequest(0);
+		}
+	}
+
+	nowTab = tabPanel.activeTab;
+}
 
 function searchAddress() {
     if (textField.getValue().trim() == '') {
@@ -344,7 +318,6 @@ function zoom2Point(lng, lat, zoom) {
     map.moveTo(new OpenLayers.LonLat(lng, lat), zoom);
 }
 
-////////////////
 function checkAddress(combobox, kind) {
     if (mapid != 0) {
         alert('Trở về MAP - Toàn Thành để thực hiện');

@@ -51,3 +51,5 @@ var comboAddressEnd;
 var menuWin;
 var infoWin;
 var wardsWin;
+
+var serverURL = 'Server.aspx';

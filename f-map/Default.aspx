@@ -9,16 +9,17 @@
     <link rel='stylesheet' type="text/css" href='css/control_style.css' />
     <!-- ** Javascript ** -->
     <!---------------Utils--------------->
-    <script type="text/javascript" src="utils/jscoord-1.1.1.js"></script>
+    <script type="text/javascript" src="libs/jscoord-1.1.1.js"></script>
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3.5&amp;sensor=false"></script>
+    <script type="text/javascript" src="libs/ext-base.js"></script>
+    <script type="text/javascript" src="libs/ext-all-debug.js"></script>
     <!------------------------------------------>
     <script type="text/javascript" src="js/globalvar.js"></script>
     <script type="text/javascript" src="js/flib.js"></script>
     <script type="text/javascript" src="js/connect.js"></script>
     <script type="text/javascript" src="js/autocomplete_address_combobox.js"></script>
     <!---------- ExtJS library: base/adapter ----------->
-    <script type="text/javascript" src="js/ext-base.js"></script>
-    <script type="text/javascript" src="js/ext-all-debug.js"></script>
+    
     <%-----------OpenLayers--------------%>
     <script type='text/javascript' src='openlayers/draw.js'></script>
     <script type='text/javascript' src='js/googleUtils.js'></script>
