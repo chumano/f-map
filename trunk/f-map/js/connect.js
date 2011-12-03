@@ -1,5 +1,6 @@
-﻿var serverURL = 'Server.aspx';
-
+﻿// perform Ajax HTTP GET request 
+// actions: a string in JSON format which contains parameters of the request
+// func: callback to execute when get response
 function getInfo(actions, func) {
     mask = new Ext.LoadMask(Ext.getBody(), { msg: "Đang tải..." });
     mask.show();
@@ -18,6 +19,7 @@ function getInfo(actions, func) {
     req.send(null);
 }
 
+// handle FeatureInfo response
 function getInfoWhenClickOnMap(actions, func) {
     var url = serverURL + para2Str(actions);
     req = getAjax();
@@ -137,6 +139,8 @@ function updateInfo() {
     }
 }
 
+// change map layers when switch map view
+// response: response string
 function changeMap(response) {
     var jSon;
     var myObject = "jSon=" + response;
@@ -206,6 +210,8 @@ function changeMap(response) {
 
 }
 
+// send request to change current map
+// mid: id of map view
 function changeMapRequest(mid) {
     //clear FeatureVector
     vectorLayer.destroyFeatures();
@@ -218,47 +224,7 @@ function changeMapRequest(mid) {
     getInfo(actions, changeMap);
 }
 
-
-function query(actions) {
-    var url = serverURL + para2Str(actions); //?action=TenDuong&u=' + item;
-    //?action=GetWards&district_id=1
-    //?action=GetMap&map_id=1
-    //?action=GetInfo&bbox=105.922404,10.756404,105.968596,10.802596&x=234&y=430&layer_name=sde:QUAN1_RG&width=550&height=550
-    //?action=SearchAddress&keyword=102%20/11,Tr%C3%A2%CC%80n%20Quang%20Kha%CC%89i
-    // url = 'http://localhost:8080/geoserver/wms?bbox=-130,24,-66,50&styles=population&Format=image/png&request=GetMap&layers=topp:states&width=550&height=250&srs=EPSG:4326';
-    req = getAjax();
-
-    req.onreadystatechange = function () {
-
-        if (req.readyState == 4 && req.status == 200) {
-
-            //obj = getElement("userlist");
-            //obj.innerHTML = req.responseText;
-            alert(req.responseText);
-
-            // add canvas into map object
-            map.addLayer(new Layer);
-
-            //            var jSon;
-            //            var myObject = "jSon=" + req.responseText;
-            //            eval(myObject);
-            //            var str = "";
-            //            for (var i = 0; i < jSon.TABLE[0].ROW.length; i++) {
-            //                str += jSon.TABLE[0].ROW[i].COL[0].DATA;
-            //                str += "<br/>";
-            //            }
-            //            //alert(myObject);
-            //            document.getElementById("div1").innerHTML = str;
-            //            show("div1");
-
-        }
-
-    }
-
-    req.open('GET', url, true);
-    req.send(null);
-}
-
+// Creating object of XMLHTTP
 function getAjax() {
     var XmlHttp;
 
