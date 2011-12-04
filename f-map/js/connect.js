@@ -35,7 +35,7 @@ function getInfoWhenClickOnMap(actions, func) {
 }
 
 function processFeatureInfo(response) {
-    //alert(response);
+    // alert(response);
     var jSon;
     var myObject = "jSon=" + response;
     eval(myObject);
@@ -46,9 +46,8 @@ function processFeatureInfo(response) {
     }
 
     //update info - SHOWDIV
-    infoWin.html = str;
-    infoWin.doLayout();
     infoWin.show();
+    infoWin.body.update(str);
 
     //UTM2LatLng
     //    var utm1 = new UTMRef(X1, Y1, "N", 48);

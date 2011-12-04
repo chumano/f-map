@@ -21,7 +21,7 @@
     // Search address
     comboAddress = createAutoCompleteAddressCombobox(
         600,
-        15, 5, 15, 305,  // top, right, bottom, left
+        15, 5, 15, 205,  // top, right, bottom, left
         'Nhập địa chỉ bạn muốn tìm'
     );
 
@@ -41,7 +41,7 @@
 
     // Find route
     comboAddressStart = createAutoCompleteAddressCombobox(
-        400,
+        300,
         15, 5, 15, 100,  // top, right, bottom, left
         'Địa chỉ bắt đầu'
     );
@@ -51,7 +51,7 @@
     });
 
     comboAddressEnd = createAutoCompleteAddressCombobox(
-        400,
+        300,
         15, 5, 15, 10,  // top, right, bottom, left
         'Địa chỉ kết thúc'
     );
@@ -91,7 +91,7 @@
             top: 15,
             right: 5,
             bottom: 15,
-            left: 305
+            left: 205
         },
         store: new Ext.data.ArrayStore({
             fields: ['id', 'district'],
@@ -113,25 +113,61 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     // Tabs
+    var logoPanel = new Ext.Panel({
+        html: '<img src="images/F-Map.png">',
+        bodyStyle: 'background-color:transparent', 
+        border: false,
+        margins: {
+            top: 8,
+            right: 0,
+            bottom: 0,
+            left: 5
+        }, 
+    });
+
     tabSearchAddress = new Ext.Panel({
         title: 'Tìm địa chỉ',
         height: 100,
         layout: 'hbox',
-        items: [comboAddress, btnSearchAddress],
+        items: [logoPanel, comboAddress, btnSearchAddress],
         bodyStyle: "background-color:#d0ddf1 !important"
+    });
+    //info tab
+    var logoPanel1 = new Ext.Panel({
+        html: '<img src="images/F-Map.png">',
+        bodyStyle: 'background-color:transparent', 
+        border: false,
+        margins: {
+            top: 8,
+            right: 0,
+            bottom: 0,
+            left: 5
+        }
     });
 
     tabInfo = new Ext.Panel({
         title: 'Quản lý',
-        items: comboDistricts,
+        items: [logoPanel1, comboDistricts],
         layout: 'hbox',
         bodyStyle: "background-color:#d0ddf1 !important"
     });
 
+    //route tab
+    var logoPanel2 = new Ext.Panel({
+        html: '<img src="images/F-Map.png">',
+        bodyStyle: 'background-color:transparent', 
+        border: false,
+        margins: {
+            top: 8,
+            right: 0,
+            bottom: 0,
+            left: 5
+        }, 
+    });
     tabRoute = new Ext.Panel({
         title: 'Tìm đường đi',
         layout: 'hbox',
-        items: [comboAddressStart, comboAddressEnd, btnFindRoute],
+        items: [logoPanel2, comboAddressStart, comboAddressEnd, btnFindRoute],
         bodyStyle: "background-color:#d0ddf1 !important"
     });
 
@@ -144,6 +180,7 @@
 
     nowTab = tabSearchAddress;
     tabPanel.on('tabchange', function (tabPanel, tab) {
+        tabPanel.doLayout();
         onTabChange(tabPanel, tab);
     });
     ///////////////////////////////////////////////////////////////////////////////////////////////
