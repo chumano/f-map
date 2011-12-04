@@ -1,14 +1,14 @@
 ﻿Ext.onReady(function () {
     Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
-	// Search address
+    // Search address
     comboAddress = createAutoCompleteAddressCombobox(
         600,
         15, 5, 15, 305,  // top, right, bottom, left
         'Nhập địa chỉ bạn muốn tìm'
     );
-	
-	btnSearchAddress = new Ext.Button({
+
+    btnSearchAddress = new Ext.Button({
         text: 'Tìm kiếm',
         height: 22,
         margins: {
@@ -20,10 +20,10 @@
         handler: function () { checkAddress(comboAddress, 0); },
         icon: "images/icon_search.png"
     });
-	///////////////////////////////////////////////////////////////////////////////////////////////
-	
-	// Find route
-	comboAddressStart = createAutoCompleteAddressCombobox(
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Find route
+    comboAddressStart = createAutoCompleteAddressCombobox(
         400,
         15, 5, 15, 100,  // top, right, bottom, left
         'Địa chỉ bắt đầu'
@@ -42,8 +42,8 @@
     comboAddressEnd.on('select', function (combo, value) {
         checkAddress(combo, 2);
     });
-	
-	btnFindRoute = new Ext.Button({
+
+    btnFindRoute = new Ext.Button({
         text: 'Tìm đường',
         height: 22,
         margins: {
@@ -52,12 +52,15 @@
             bottom: 15,
             left: 10
         },
-        handler: googleFindRoute,
+        handler: function () {
+            googleFindRoute();
+            map.zoomToExtent(global_bounds);
+        },
         icon: "images/icon_search.png"
     });
-	///////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
-	// District info
+    // District info
     comboDistricts = new Ext.form.ComboBox({
         width: 600,
         typeAhead: true,
@@ -79,20 +82,20 @@
         }),
         valueField: 'id',
         displayField: 'district',
-        listeners: { 
-			select: {
-				fn: function (combo, value) {
-					//get map
-					//?action=GetMap&map_id=1
-					changeMapRequest(combo.getValue());
-				}
-			}
+        listeners: {
+            select: {
+                fn: function (combo, value) {
+                    //get map
+                    //?action=GetMap&map_id=1
+                    changeMapRequest(combo.getValue());
+                }
+            }
         }
     });
     comboDistricts.setValue(0);
-	///////////////////////////////////////////////////////////////////////////////////////////////
-    
-	// Tabs
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Tabs
     tabSearchAddress = new Ext.Panel({
         title: 'Tìm địa chỉ',
         height: 100,
@@ -100,14 +103,14 @@
         items: [comboAddress, btnSearchAddress],
         bodyStyle: "background-color:#d0ddf1 !important"
     });
-	
+
     tabInfo = new Ext.Panel({
         title: 'Quản lý',
         items: comboDistricts,
         layout: 'hbox',
         bodyStyle: "background-color:#d0ddf1 !important"
     });
-	
+
     tabRoute = new Ext.Panel({
         title: 'Tìm đường đi',
         layout: 'hbox',
@@ -124,11 +127,11 @@
 
     nowTab = tabSearchAddress;
     tabPanel.on('tabchange', function (tabPanel, tab) {
-		onTabChange(tabPanel, tab);
+        onTabChange(tabPanel, tab);
     });
-	///////////////////////////////////////////////////////////////////////////////////////////////
-	
-	// Main view port
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Main view port
     var viewport = new Ext.Viewport({
         layout: {
             type: 'border',
@@ -156,7 +159,7 @@
             })
         ]
     });
-	///////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 });
 
 function onTabChange(tabPanel, tab) {
@@ -328,15 +331,20 @@ function checkAddress(combobox, kind) {
         if (currentMarker) currentMarker.destroy();
         currentMarker = null;
     } else if(kind == 1) {
-        if (startMarker) startMarker.destroy();
-        vectorLayer.destroyFeatures();
-        startMarker = null;
+//        if (startMarker) startMarker.destroy();
+        vectorLayer.removeAllFeatures();
+//        startMarker = null;
+        if(startPoint!=null)
+            draggableFeatureLayer.removeFeatures([startPoint]);
+        startPoint = null;
     } else {
-        if (endMarker) endMarker.destroy();
-        vectorLayer.destroyFeatures();
-        endMarker = null;
+//        if (endMarker) endMarker.destroy();
+        vectorLayer.removeAllFeatures();
+//        endMarker = null;
+        if(endPoint!=null)
+            draggableFeatureLayer.removeFeatures([endPoint]);
+        endPoint = null;
     } 
-     
 
     //Clear overlay
     //while (markersLayer.markers.length > 0)
@@ -378,17 +386,39 @@ function checkAddress(combobox, kind) {
                     marker = new OpenLayers.Marker(point, icon);
                     currentMarker = marker;
                 } else if (kind == 1) {
-                    var icon = new OpenLayers.Icon('./images/markers/letter_b.png', size, offset);
-                    marker = new OpenLayers.Marker(point, icon);
-                    startMarker = marker;
+//                    var icon = new OpenLayers.Icon('./images/markers/letter_b.png', size, offset);
+//                    marker = new OpenLayers.Marker(point, icon);
+//                    startMarker = marker;
+
+                    var newstyle = {
+                        graphicWidth: 32,
+                        graphicHeight: 37,
+                        graphicXOffset: -16,
+                        graphicYOffset: -37,
+                        externalGraphic: "./images/markers/letter_b.png"
+                    };
+                    startPoint = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(ll1.lng, ll1.lat), null, newstyle);
+                    draggableFeatureLayer.addFeatures([startPoint]);
                 } else {
-                    var icon = new OpenLayers.Icon('./images/markers/letter_e.png', size, offset);
-                    marker = new OpenLayers.Marker(point, icon);
-                    endMarker = marker;
+//                    var icon = new OpenLayers.Icon('./images/markers/letter_e.png', size, offset);
+//                    marker = new OpenLayers.Marker(point, icon);
+//                    endMarker = marker;
+
+                    var newstyle = {
+                        graphicWidth: 32,
+                        graphicHeight: 37,
+                        graphicXOffset: -16,
+                        graphicYOffset: -37,
+                        externalGraphic: "./images/markers/letter_e.png"
+                    };
+                    endPoint = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(ll1.lng, ll1.lat), null, newstyle);
+                    draggableFeatureLayer.addFeatures([endPoint]);
                 }
 
                 // addMarker(marker, ll1.lng, ll1.lat, i + 1, combobox.getRawValue());
-                markersLayer.addMarker(marker);
+                // markersLayer.addMarker(marker);
+                // draggableFeatureLayer.addMarker(marker);
+
                 //zoom2Point(ll1.lng, ll1.lat, defaultCenterZoom);
                 zoom2PointD(ll1.lng, ll1.lat);
             }

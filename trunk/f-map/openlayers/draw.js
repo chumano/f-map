@@ -14,4 +14,5 @@
 
     var lineFeature = new OpenLayers.Feature.Vector(line, null, style);
     vectorLayer.addFeatures([lineFeature]);
+    waiting = false;
 }

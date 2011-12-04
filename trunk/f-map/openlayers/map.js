@@ -24,7 +24,7 @@ function init() {
             var jSon;
             var myObject = "jSon=" + response;
             eval(myObject);
-			
+
             //lay bound de tao options
             bounds = new OpenLayers.Bounds(jSon.bound.MinX, jSon.bound.MinY, jSon.bound.MaxX, jSon.bound.MaxY);
 
@@ -43,7 +43,7 @@ function init() {
             }
 
             layers = new OpenLayers.Layer.WMS(
-                    "Geoserver layers", 
+                    "Geoserver layers",
 					hostURL,
                     {
                         LAYERS: layerNames, //'sde:QUAN1_RG',
@@ -64,12 +64,12 @@ function init() {
             gmap = new OpenLayers.Layer.Google(
                 "Google Streets", // the default
                 {
-					numZoomLevels: 20,
-					projection: new OpenLayers.Projection("EPSG:900913"),
-					displayProjection: new OpenLayers.Projection("EPSG:4326")
-				}, 
-				{ 
-					isBaseLayer: false 
+                numZoomLevels: 20,
+                projection: new OpenLayers.Projection("EPSG:900913"),
+                displayProjection: new OpenLayers.Projection("EPSG:4326")
+            },
+				{
+				    isBaseLayer: false
 				}
             );
 
@@ -85,16 +85,32 @@ function init() {
             };
             vectorLayer = new OpenLayers.Layer.Vector("Point Layer");
 
+            // draggable layer
+            draggableFeatureLayer = new OpenLayers.Layer.Vector('DraggableFeature Layer');
+
             // marker Layer
             markersLayer = new OpenLayers.Layer.Markers("Markers");
 
             // add all layers
-            map.addLayers([layers, vectorLayer, markersLayer]);
+            map.addLayers([layers, vectorLayer, markersLayer, draggableFeatureLayer]);
+
+            var dragFeature = new OpenLayers.Control.DragFeature(draggableFeatureLayer);
+            dragFeature.onDrag = function (feature, pixel) {
+                googleFindRoute();
+            };
+
+            dragFeature.onComplete = function (feature, pixel) {
+                googleFindRoute();
+                map.zoomToExtent(global_bounds);
+            };
+
+            map.addControl(dragFeature);
+            dragFeature.activate();
 
             // Switcher Control
             // map.addControl(new OpenLayers.Control.LayerSwitcher());
 
-			// add controls to map
+            // add controls to map
             map.addControl(new OpenLayers.Control.PanZoomBar());
             map.addControl(new OpenLayers.Control.Navigation());
             map.addControl(new OpenLayers.Control.ScaleLine());
@@ -105,80 +121,80 @@ function init() {
             // TODO add edit map panel
             /*
             var DeleteFeature = OpenLayers.Class(OpenLayers.Control, {
-                initialize: function (layer, options) {
-                    OpenLayers.Control.prototype.initialize.apply(this, [options]);
-                    this.layer = layer;
-                    this.handler = new OpenLayers.Handler.Feature(
-                    this, layer, { click: this.clickFeature }
-                );
-                },
-                clickFeature: function (feature) {
-                    // if feature doesn't have a fid, destroy it
-                    if (feature.fid == undefined) {
-                        this.layer.destroyFeatures([feature]);
-                    } else {
-                        feature.state = OpenLayers.State.DELETE;
-                        this.layer.events.triggerEvent("afterfeaturemodified",
-                                                   { feature: feature });
-                        feature.renderIntent = "select";
-                        this.layer.drawFeature(feature);
-                    }
-                },
-                setMap: function (map) {
-                    this.handler.setMap(map);
-                    OpenLayers.Control.prototype.setMap.apply(this, arguments);
-                },
-                CLASS_NAME: "OpenLayers.Control.DeleteFeature"
+            initialize: function (layer, options) {
+            OpenLayers.Control.prototype.initialize.apply(this, [options]);
+            this.layer = layer;
+            this.handler = new OpenLayers.Handler.Feature(
+            this, layer, { click: this.clickFeature }
+            );
+            },
+            clickFeature: function (feature) {
+            // if feature doesn't have a fid, destroy it
+            if (feature.fid == undefined) {
+            this.layer.destroyFeatures([feature]);
+            } else {
+            feature.state = OpenLayers.State.DELETE;
+            this.layer.events.triggerEvent("afterfeaturemodified",
+            { feature: feature });
+            feature.renderIntent = "select";
+            this.layer.drawFeature(feature);
+            }
+            },
+            setMap: function (map) {
+            this.handler.setMap(map);
+            OpenLayers.Control.prototype.setMap.apply(this, arguments);
+            },
+            CLASS_NAME: "OpenLayers.Control.DeleteFeature"
             });
             var saveStrategy = new OpenLayers.Strategy.Save();
             saveStrategy.activate();
 
             wfs = new OpenLayers.Layer.Vector("Editable Features", {
-                strategies: [new OpenLayers.Strategy.BBOX(), saveStrategy],
-                projection: new OpenLayers.Projection("EPSG:4326"),
-                protocol: new OpenLayers.Protocol.WFS({
-                    version: "1.1.0",
-                    srsName: "EPSG:4326",
-                    url: "http://demo.opengeo.org/geoserver/wfs",
-                    featureNS: "http://opengeo.org",
-                    featureType: "restricted",
-                    geometryName: "the_geom",
-                    schema: "http://demo.opengeo.org/geoserver/wfs/DescribeFeatureType?version=1.1.0&typename=og:restricted"
-                })
+            strategies: [new OpenLayers.Strategy.BBOX(), saveStrategy],
+            projection: new OpenLayers.Projection("EPSG:4326"),
+            protocol: new OpenLayers.Protocol.WFS({
+            version: "1.1.0",
+            srsName: "EPSG:4326",
+            url: "http://demo.opengeo.org/geoserver/wfs",
+            featureNS: "http://opengeo.org",
+            featureType: "restricted",
+            geometryName: "the_geom",
+            schema: "http://demo.opengeo.org/geoserver/wfs/DescribeFeatureType?version=1.1.0&typename=og:restricted"
+            })
             });
 
             map.addLayers([wfs]);
 
             var panel = new OpenLayers.Control.Panel({
-                displayClass: 'customEditingToolbar',
-                allowDepress: true
+            displayClass: 'customEditingToolbar',
+            allowDepress: true
             });
 
             var draw = new OpenLayers.Control.DrawFeature(
-                wfs, OpenLayers.Handler.Polygon,
-                {
-                    title: "Draw Feature",
-                    displayClass: "olControlDrawFeaturePolygon",
-                    multi: true
-                }
+            wfs, OpenLayers.Handler.Polygon,
+            {
+            title: "Draw Feature",
+            displayClass: "olControlDrawFeaturePolygon",
+            multi: true
+            }
             );
 
             var edit = new OpenLayers.Control.ModifyFeature(wfs, {
-                title: "Modify Feature",
-                displayClass: "olControlModifyFeature"
+            title: "Modify Feature",
+            displayClass: "olControlModifyFeature"
             });
 
             var del = new DeleteFeature(wfs, { title: "Delete Feature" });
 
             var save = new OpenLayers.Control.Button({
-                title: "Save Changes",
-                trigger: function () {
-                    if (edit.feature) {
-                    edit.selectControl.unselectAll();
-                    }
-                    saveStrategy.save();
-                },
-                displayClass: "olControlSaveFeatures"
+            title: "Save Changes",
+            trigger: function () {
+            if (edit.feature) {
+            edit.selectControl.unselectAll();
+            }
+            saveStrategy.save();
+            },
+            displayClass: "olControlSaveFeatures"
             });
 
             panel.addControls([save, del, edit, draw]);
@@ -216,14 +232,14 @@ function init() {
                 getInfoWhenClickOnMap(actions, processFeatureInfo);
             });
 
-			// map.events.register('zoomend', this, function (event) {
-				// var x = map.getZoom();
-				// tabPanel.setActiveTab(1);
-				// tabInfo.update("Zoom: "+x);
-				// if (x > 15) {
-				   // map.zoomTo(15);
-				// }
-			// });
+            // map.events.register('zoomend', this, function (event) {
+            // var x = map.getZoom();
+            // tabPanel.setActiveTab(1);
+            // tabInfo.update("Zoom: "+x);
+            // if (x > 15) {
+            // map.zoomTo(15);
+            // }
+            // });
 
             // get all districts
             getMapView();

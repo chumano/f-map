@@ -11,7 +11,7 @@ var gmap; //google layer
 var layers; // main layers
 var vectorLayer; // Layer chua cac features
 var markersLayer; // Layer chua cac markers
-var selectedLayer; // Layer chua cac Features duoc chon
+var draggableFeatureLayer; 
 
 var selectControl;
 var mask;
@@ -34,6 +34,9 @@ var labelInfo;
 var searchWin;
 var textField;
 
+var startPoint = null;
+var endPoint = null;
+
 /////////////////
 var nowTab; //0 , 1, 2
 
@@ -53,3 +56,5 @@ var infoWin;
 var wardsWin;
 
 var serverURL = 'Server.aspx';
+var waiting = false;
+var global_bounds = null;
