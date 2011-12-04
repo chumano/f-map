@@ -1,6 +1,23 @@
 ﻿Ext.onReady(function () {
     Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
+    // information window
+    infoWin = new Ext.Window({
+        layout: 'fit',
+        title: 'Thông tin',
+        width: 300,
+        height: 400,
+        draggable: true,
+        closeAction: 'hide',
+        plain: true,
+        border: false,
+        header: false,
+        resizable: true,
+        autoScroll: true,
+        x: 2,
+        y: 89
+    });
+
     // Search address
     comboAddress = createAutoCompleteAddressCombobox(
         600,
