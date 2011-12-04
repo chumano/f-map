@@ -45,7 +45,6 @@ function processFeatureInfo(response) {
         str += jSon[0].Attrs[i].Name + " : " + jSon[0].Attrs[i].Value + '<br/>';
     }
 
-    //update info - SHOWDIV
     infoWin.show();
     infoWin.body.update(str);
 
@@ -206,8 +205,6 @@ function changeMap(response) {
             //tabInfo.update(str);
         }
     );
-
-
 }
 
 // send request to change current map
