@@ -46,8 +46,9 @@ function processFeatureInfo(response) {
     }
 
     //update info - SHOWDIV
-    //tabPanel.setActiveTab(1);
-    //tabInfo.update(str);
+    infoWin.html = str;
+    infoWin.doLayout();
+    infoWin.show();
 
     //UTM2LatLng
     //    var utm1 = new UTMRef(X1, Y1, "N", 48);
