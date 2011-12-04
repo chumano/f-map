@@ -40,6 +40,15 @@ function parseRouteResponse2Points(directionResult) {
         var openLayersP = new OpenLayers.Geometry.Point(googleP.lng(), googleP.lat());
         points.push(openLayersP);
 
+        //decode
+        var decodePoints = google.maps.geometry.encoding.decodePath(myRoute.steps[i].polyline.points);
+        for (var j = 0; j < decodePoints.length; j++) {
+            googleP = decodePoints[j];
+            openLayersP = new OpenLayers.Geometry.Point(googleP.lng(), googleP.lat());
+            points.push(openLayersP);
+        }
+
+        //dua end vao cuoi
         if (i == myRoute.steps.length - 1) {
             googleP = myRoute.steps[i].end_point;
             openLayersP = new OpenLayers.Geometry.Point(googleP.lng(), googleP.lat());
@@ -48,6 +57,9 @@ function parseRouteResponse2Points(directionResult) {
 
         //instructions
         instructions += myRoute.steps[i].instructions + '<br/>';
+
+        
+
     }
 
     var NE = directionResult.routes[0].bounds.getNorthEast();
@@ -56,6 +68,7 @@ function parseRouteResponse2Points(directionResult) {
     var maxX = NE.lng(); var maxY = NE.lat();
     var bounds = new OpenLayers.Bounds(minX, minY, maxX, maxY);
     map.zoomToExtent(bounds);
+
     return [points,instructions];
 }
 
