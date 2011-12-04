@@ -97,9 +97,9 @@
 
             //map.updateSize();
         }
-
-        window.onload = initUI;
         window.onresize = resize;
+        window.onload = initUI;
+        
         var showFloatDiv = true;
         function show_hideFloatDiv() {
             if (showFloatDiv) {
