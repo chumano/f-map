@@ -23,11 +23,11 @@ public partial class Server : System.Web.UI.Page
         {
             switch (Request["action"])
             {
-                case "Test":
-                    Test t = new Test();
-                    string s = t.run();
-                    Response.Write(s);
-                    break;
+                //case "Test":
+                //    Test t = new Test();
+                //    string s = t.run();
+                //    Response.Write(s);
+                //    break;
 
                 // get all MapView objects
                 // action=GetMapView
@@ -129,11 +129,8 @@ public partial class Server : System.Web.UI.Page
         DataTable dt = Helper.GetDataTable("select * from MapView where ID = " + mapId );
 
         DataRow row = dt.Rows[0];
-        BoundModel bound = new BoundModel();
-        bound.MinX = (double)row["MinX"];
-        bound.MaxX = (double)row["MaxX"];
-        bound.MinY = (double)row["MinY"];
-        bound.MaxY = (double)row["MaxY"];
+        // double minx, double miny, double maxx, double maxy
+        BoundingBox bound = new BoundingBox((double)row["MinX"], (double)row["MinY"], (double)row["MaxX"], (double)row["MaxY"]);
 
         // Get layers for map
         // dt = Helper.GetDataTable("select * from Layer, LayerMap where " + mapId + " = LayerMap.MapID and LayerMap.LayerID = Layer.ID");
