@@ -16,5 +16,5 @@ public class MapInfoModel
 	}
 
     public LayerModel[] layers { get; set; }
-    public BoundModel bound { get; set; }
+    public BoundingBox bound { get; set; }
 }

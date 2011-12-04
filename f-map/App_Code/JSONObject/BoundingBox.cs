@@ -21,6 +21,7 @@ public class BoundingBox
         MaxX = maxx;
         MaxY = maxy;
 	}
+
     public BoundingBox(string bbox)
     {
         string []str = bbox.Split(',');
