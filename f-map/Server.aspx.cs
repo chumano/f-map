@@ -44,15 +44,6 @@ public partial class Server : System.Web.UI.Page
                 // get information when click on map
                 // action=GetInfo&bbox=&x=&y=&layer_name=&width=&height=
                 case "GetInfo":
-                    string url = String.Format(Config.URL_GET_INFO,
-                                                Request["bbox"],
-                                                Request["x"],
-                                                Request["y"],
-                                                Request["layer_name"],
-                                                Request["layer_name"],
-                                                Request["width"],
-                                                Request["height"]);
-
                     BoundingBox bbox = new BoundingBox(Request["bbox"]);
                     Service.WMS.FeatureInfoRequest req = new Service.WMS.FeatureInfoRequest(
                                                 Request["layer_name"],
