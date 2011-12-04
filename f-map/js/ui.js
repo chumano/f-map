@@ -177,7 +177,6 @@
         // tabPosition: 'bottom',
         items: [tabSearchAddress, tabRoute, tabInfo]
     });
-    tabPanel.doLayout();
 
     nowTab = tabSearchAddress;
     tabPanel.on('tabchange', function (tabPanel, tab) {
